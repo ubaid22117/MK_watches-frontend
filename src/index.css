@@ -1,0 +1,553 @@
+/* ─── Reset ─────────────────────────────── */
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* ─── Variables ──────────────────────────── */
+:root {
+  --gold: #D4AF37;
+  --gold-light: #F0D060;
+  --gold-dark: #A0820A;
+  --black: #0B0B0B;
+  --black-2: #111111;
+  --black-3: #1A1A1A;
+  --black-4: #222222;
+  --white: #FFFFFF;
+  --gray: #888888;
+  --gray-light: #CCCCCC;
+  --font-heading: 'Playfair Display', serif;
+  --font-body: 'Poppins', sans-serif;
+  --transition: all 0.3s ease;
+  --shadow-gold: 0 0 20px rgba(212, 175, 55, 0.3);
+  --shadow-card: 0 8px 32px rgba(0, 0, 0, 0.4);
+}
+
+/* ─── Base ───────────────────────────────── */
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-body);
+  background-color: var(--black);
+  color: var(--white);
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+a { text-decoration: none; color: inherit; }
+ul { list-style: none; }
+img { max-width: 100%; display: block; }
+button { cursor: pointer; border: none; outline: none; font-family: var(--font-body); }
+input, textarea, select { font-family: var(--font-body); outline: none; }
+
+/* ─── Scrollbar ──────────────────────────── */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: var(--black-2); }
+::-webkit-scrollbar-thumb { background: var(--gold-dark); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--gold); }
+
+/* ─── Container ──────────────────────────── */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* ─── Typography ─────────────────────────── */
+.gold-text { color: var(--gold); }
+
+.section-title {
+  font-family: var(--font-heading);
+  font-size: clamp(1.6rem, 4vw, 2.5rem);
+  font-weight: 600;
+  text-align: center;
+  margin-bottom: 0.8rem;
+}
+
+.section-subtitle {
+  color: var(--gray);
+  text-align: center;
+  font-size: 0.95rem;
+  margin-bottom: 3rem;
+}
+
+.section-label {
+  font-size: 0.72rem;
+  letter-spacing: 4px;
+  color: var(--gold);
+  text-transform: uppercase;
+  text-align: center;
+  margin-bottom: 0.5rem;
+}
+
+/* ─── Buttons ────────────────────────────── */
+.btn-primary {
+  background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+  color: var(--black);
+  padding: 12px 28px;
+  border-radius: 6px;
+  font-weight: 700;
+  font-size: 0.85rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  transition: var(--transition);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  border: none;
+  font-family: var(--font-body);
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg, var(--gold-light), var(--gold));
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-gold);
+}
+
+.btn-outline {
+  background: transparent;
+  color: var(--gold);
+  padding: 12px 28px;
+  border-radius: 6px;
+  border: 1px solid var(--gold);
+  font-weight: 600;
+  font-size: 0.85rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  transition: var(--transition);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-family: var(--font-body);
+}
+
+.btn-outline:hover {
+  background: var(--gold);
+  color: var(--black);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-gold);
+}
+
+/* ─── Glass Card ─────────────────────────── */
+.glass-card {
+  background: rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(212, 175, 55, 0.15);
+  border-radius: 12px;
+}
+
+/* ─── Gold Divider ───────────────────────── */
+.gold-divider {
+  width: 60px;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  margin: 0.8rem auto 1rem;
+}
+
+/* ─── Spinner ────────────────────────────── */
+.spinner {
+  width: 44px;
+  height: 44px;
+  border: 3px solid rgba(212, 175, 55, 0.15);
+  border-top-color: var(--gold);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin: 2rem auto;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ─── Badge ──────────────────────────────── */
+.badge {
+  padding: 3px 9px;
+  border-radius: 4px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  display: inline-block;
+}
+
+.badge-gold { background: var(--gold); color: var(--black); }
+.badge-red { background: #e74c3c; color: white; }
+.badge-new { background: rgba(52,152,219,0.9); color: white; }
+.badge-best { background: rgba(155,89,182,0.9); color: white; }
+
+/* ─── Stars ──────────────────────────────── */
+.stars { color: var(--gold); font-size: 0.9rem; }
+
+/* ─── Empty Page ─────────────────────────── */
+.empty-page {
+  min-height: 70vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 120px 20px 60px;
+}
+
+.empty-page > div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.empty-icon { font-size: 4rem; }
+
+.empty-page h2 {
+  font-family: var(--font-heading);
+  font-size: 1.8rem;
+  color: var(--gold);
+}
+
+.empty-page p { color: var(--gray); font-size: 0.95rem; }
+
+/* ─── Page Title ─────────────────────────── */
+.page-title {
+  font-family: var(--font-heading);
+  font-size: clamp(1.8rem, 4vw, 2.5rem);
+  margin-bottom: 2rem;
+}
+
+/* ─── Back Button ────────────────────────── */
+.back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: none;
+  border: none;
+  color: #666;
+  font-size: 0.85rem;
+  cursor: pointer;
+  margin-bottom: 1.5rem;
+  transition: color 0.3s;
+  padding: 0;
+  font-family: var(--font-body);
+}
+
+.back-btn:hover { color: var(--gold); }
+
+/* ─── Products Grid (Default) ────────────── */
+.products-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.2rem;
+}
+
+/* ─── Product Card ───────────────────────── */
+.product-card {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(212,175,55,0.12);
+  border-radius: 12px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.product-card:hover {
+  border-color: rgba(212,175,55,0.35);
+  box-shadow: 0 12px 40px rgba(212,175,55,0.12);
+}
+
+.product-img-wrap {
+  position: relative;
+  aspect-ratio: 1;
+  overflow: hidden;
+  background: #0f0f0f;
+}
+
+.product-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.product-card:hover .product-img { transform: scale(1.06); }
+
+.product-img-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3.5rem;
+  background: #111;
+  color: #333;
+}
+
+.product-badges {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  z-index: 2;
+}
+
+/* ─── Card Wishlist Button ───────────────── */
+.card-wishlist-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 34px;
+  height: 34px;
+  background: rgba(11,11,11,0.75);
+  border: 1px solid rgba(212,175,55,0.2);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s;
+  backdrop-filter: blur(4px);
+  opacity: 0;
+  transform: scale(0.8);
+  z-index: 3;
+}
+
+.product-card:hover .card-wishlist-btn {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.card-wishlist-btn:hover {
+  background: rgba(212,175,55,0.15);
+  border-color: var(--gold);
+}
+
+.heart-filled { color: var(--gold); fill: var(--gold); }
+.heart-empty { color: white; }
+
+/* ─── Product Info ───────────────────────── */
+.product-info { padding: 14px; }
+
+.product-category {
+  font-size: 0.68rem;
+  letter-spacing: 2px;
+  color: var(--gold);
+  text-transform: uppercase;
+  margin-bottom: 5px;
+}
+
+.product-name {
+  font-family: var(--font-heading);
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: white;
+  margin-bottom: 6px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.product-rating {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  margin-bottom: 8px;
+}
+
+.rating-count {
+  color: #555;
+  font-size: 0.72rem;
+  margin-left: 4px;
+}
+
+.product-price {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+.price-main {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--gold);
+}
+
+.price-old {
+  font-size: 0.78rem;
+  color: #444;
+  text-decoration: line-through;
+}
+
+/* ─── Cart Button ────────────────────────── */
+.product-cart-btn {
+  width: 100%;
+  padding: 9px;
+  background: transparent;
+  border: 1px solid rgba(212,175,55,0.3);
+  color: var(--gold);
+  border-radius: 6px;
+  font-size: 0.75rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  transition: all 0.3s;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-family: var(--font-body);
+}
+
+.product-cart-btn:hover:not(:disabled) {
+  background: var(--gold);
+  color: var(--black);
+  border-color: var(--gold);
+}
+
+.product-cart-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  border-color: #333;
+  color: #555;
+}
+
+/* ─── Qty Controls ───────────────────────── */
+.qty-controls {
+  display: flex;
+  align-items: center;
+  border: 1px solid rgba(212,175,55,0.25);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.qty-controls button {
+  background: rgba(212,175,55,0.08);
+  border: none;
+  color: var(--gold);
+  width: 36px;
+  height: 36px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: background 0.25s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.qty-controls button:hover:not(:disabled) { background: rgba(212,175,55,0.2); }
+.qty-controls button:disabled { opacity: 0.3; cursor: not-allowed; }
+
+.qty-controls span {
+  padding: 0 16px;
+  color: white;
+  font-size: 0.9rem;
+  font-weight: 600;
+  min-width: 46px;
+  text-align: center;
+}
+
+/* ─── Form Inputs ────────────────────────── */
+.form-group { margin-bottom: 1.1rem; }
+
+.form-group label {
+  display: block;
+  font-size: 0.76rem;
+  color: #777;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.form-input {
+  width: 100%;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(212,175,55,0.18);
+  color: white;
+  padding: 11px 14px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-family: var(--font-body);
+  transition: all 0.3s;
+}
+
+.form-input:focus {
+  border-color: rgba(212,175,55,0.5);
+  background: rgba(212,175,55,0.03);
+  box-shadow: 0 0 0 3px rgba(212,175,55,0.07);
+}
+
+.form-input::placeholder { color: #333; }
+.form-textarea { resize: vertical; min-height: 85px; }
+
+/* ─── Responsive Grid (Default Pages) ────── */
+@media (max-width: 1100px) {
+  .products-grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+@media (max-width: 768px) {
+  .products-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 420px) {
+  .products-grid { grid-template-columns: repeat(2, 1fr); gap: 0.7rem; }
+  .container { padding: 0 14px; }
+}
+
+@media (max-width: 360px) {
+  .products-grid { grid-template-columns: 1fr; }
+}
+
+/* ─── Product Card Mobile Adjustments ────── */
+@media (max-width: 480px) {
+  .product-info { padding: 10px; }
+
+  .product-name {
+    font-size: 0.82rem;
+  }
+
+  .product-category {
+    font-size: 0.6rem;
+    letter-spacing: 1px;
+  }
+
+  .price-main {
+    font-size: 0.85rem;
+  }
+
+  .price-old {
+    font-size: 0.7rem;
+  }
+
+  .product-cart-btn {
+    font-size: 0.68rem;
+    padding: 7px;
+  }
+
+  .product-rating {
+    font-size: 0.75rem;
+  }
+
+  .rating-count {
+    font-size: 0.65rem;
+  }
+
+  .card-wishlist-btn {
+    width: 28px;
+    height: 28px;
+    font-size: 0.85rem;
+  }
+
+  .badge {
+    font-size: 0.6rem;
+    padding: 2px 6px;
+  }
+}
+
+@media (max-width: 360px) {
+  .product-info { padding: 8px; }
+
+  .product-name {
+    font-size: 0.78rem;
+  }
+}
