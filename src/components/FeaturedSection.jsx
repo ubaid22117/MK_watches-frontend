@@ -16,9 +16,10 @@ const FeaturedSection = () => {
     const fetchAll = async () => {
       try {
         const { data } = await axios.get(`${API_URL}/api/products`);
-        setProducts(data.products);
+        setProducts(data.products || []);
       } catch (error) {
         console.error('Failed to load products:', error);
+        setProducts([]);
       } finally {
         setLoading(false);
       }
@@ -27,6 +28,7 @@ const FeaturedSection = () => {
   }, []);
 
   const goNext = useCallback(() => {
+    if (!products.length) return;
     setCurrentIndex((prev) => (prev + 1) % products.length);
   }, [products.length]);
 
@@ -53,7 +55,7 @@ const FeaturedSection = () => {
     </section>
   );
 
-  if (products.length === 0) return (
+  if (!products || products.length === 0) return (
     <section className="featured-section">
       <div className="container">
         <p className="section-label">✦ Explore Our Collection ✦</p>
@@ -67,6 +69,9 @@ const FeaturedSection = () => {
   );
 
   const product = products[currentIndex];
+
+  if (!product) return null;
+
   const imgUrl = product.images?.[0]?.url;
 
   return (
