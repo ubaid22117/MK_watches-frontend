@@ -7,17 +7,28 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Page reload par user localStorage se lo
-    const savedUser = localStorage.getItem('MKUser');
-    if (savedUser) {
-      setUser(JSON.parse(savedUser));
+    try {
+      const savedUser = localStorage.getItem('MKUser');
+      if (savedUser && savedUser !== 'undefined' && savedUser !== 'null') {
+        const parsed = JSON.parse(savedUser);
+        setUser(parsed && typeof parsed === 'object' ? parsed : null);
+      }
+    } catch (error) {
+      console.error('Auth load error:', error);
+      localStorage.removeItem('MKUser');
+      setUser(null);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   }, []);
 
   const login = (userData) => {
     setUser(userData);
-    localStorage.setItem('MKUser', JSON.stringify(userData));
+    try {
+      localStorage.setItem('MKUser', JSON.stringify(userData));
+    } catch (error) {
+      console.error('Auth save error:', error);
+    }
   };
 
   const logout = () => {
