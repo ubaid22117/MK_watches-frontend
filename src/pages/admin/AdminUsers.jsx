@@ -13,7 +13,7 @@ const AdminUsers = () => {
 
   const fetchUsers = async () => {
     try {
-      const { data } = await axios.get('http://192.168.100.8:5000/api/users', {
+      const { data } = await axios.get('${import.meta.env.VITE_API_URL}/api/users', {
         headers: { Authorization: `Bearer ${user?.token}` },
       });
       setUsers(data.users);
@@ -29,7 +29,7 @@ const AdminUsers = () => {
   const handleDelete = async (id, name) => {
     if (!window.confirm(`Are you sure you want to delete "${name}"?`)) return;
     try {
-      await axios.delete(`http://192.168.100.8:5000/api/users/${id}`, {
+      await axios.delete(`${import.meta.env.VITE_API_URL}/api/users/${id}`, {
         headers: { Authorization: `Bearer ${user?.token}` },
       });
       toast.success('User deleted successfully!');

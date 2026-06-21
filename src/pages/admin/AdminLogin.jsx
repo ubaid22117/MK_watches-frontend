@@ -19,7 +19,7 @@ const AdminLogin = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      const { data } = await axios.post('http://192.168.100.8:5000/api/auth/login', form);
+      const { data } = await axios.post('${import.meta.env.VITE_API_URL}/api/auth/login', form);
       if (!data.isAdmin) {
         toast.error('Access denied. Admin privileges required.');
         return;

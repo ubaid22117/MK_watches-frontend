@@ -9,7 +9,7 @@ import { useAuth } from '../context/AuthContext';
 import { FiShoppingBag, FiCheck, FiTruck, FiSmartphone, FiCreditCard, FiHome } from 'react-icons/fi';
 import '../styles/checkout.css';
 
-const API_URL = 'http://192.168.100.8:5000';
+const API_URL = import.meta.env.VITE_API_URL;
 
 const Checkout = () => {
   const { cartItems, totalPrice, clearCart } = useCart();

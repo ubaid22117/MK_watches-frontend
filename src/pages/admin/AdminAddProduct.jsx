@@ -53,7 +53,7 @@ const AdminAddProduct = () => {
       }));
       images.forEach((img) => formData.append('images', img));
 
-      await axios.post('http://192.168.100.8:5000/api/products', formData, {
+      await axios.post('${import.meta.env.VITE_API_URL}/api/products', formData, {
         headers: {
           Authorization: `Bearer ${user?.token}`,
           'Content-Type': 'multipart/form-data',

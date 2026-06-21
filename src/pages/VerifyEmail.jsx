@@ -13,7 +13,7 @@ const VerifyEmail = () => {
     const verify = async () => {
       try {
         const { data } = await axios.get(
-          `http://192.168.100.8:5000/api/auth/verify-email/${token}`
+          `${import.meta.env.VITE_API_URL}/api/auth/verify-email/${token}`
         );
         setStatus('success');
         setMessage(data.message);

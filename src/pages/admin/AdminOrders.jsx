@@ -5,7 +5,7 @@ import toast from 'react-hot-toast';
 import { useAuth } from '../../context/AuthContext';
 import AdminLayout from './AdminLayout';
 
-const API_URL = 'http://192.168.100.8:5000';
+const API_URL = import.meta.env.VITE_API_URL;
 
 const AdminOrders = () => {
   const { user } = useAuth();

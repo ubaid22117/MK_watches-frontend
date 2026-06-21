@@ -22,7 +22,7 @@ const ResetPassword = () => {
     }
     setLoading(true);
     try {
-      await axios.post(`http://192.168.100.8:5000/api/auth/reset-password/${token}`, {
+      await axios.post(`${import.meta.env.VITE_API_URL}/api/auth/reset-password/${token}`, {
         password: form.password,
       });
       setSuccess(true);

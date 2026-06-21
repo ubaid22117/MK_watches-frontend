@@ -16,8 +16,8 @@ const AdminDashboard = () => {
       try {
         const config = { headers: { Authorization: `Bearer ${user?.token}` } };
         const [statsRes, ordersRes] = await Promise.all([
-          axios.get('http://192.168.100.8:5000/api/orders/stats', config),
-          axios.get('http://192.168.100.8:5000/api/orders', config),
+          axios.get('${import.meta.env.VITE_API_URL}/api/orders/stats', config),
+          axios.get('${import.meta.env.VITE_API_URL}/api/orders', config),
         ]);
         setStats(statsRes.data.stats);
         setRecentOrders(ordersRes.data.orders.slice(0, 5));

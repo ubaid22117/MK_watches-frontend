@@ -21,7 +21,7 @@ const Products = () => {
     const fetchProducts = async () => {
       setLoading(true);
       try {
-        let url = 'http://192.168.100.8:5000/api/products?';
+        let url = '${import.meta.env.VITE_API_URL}/api/products?';
         if (keyword) url += `keyword=${keyword}&`;
         if (category) url += `category=${category}&`;
         if (sort) url += `sort=${sort}&`;

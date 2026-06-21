@@ -26,13 +26,13 @@ const ProductDetail = () => {
       setLoading(true);
       try {
         const { data } = await axios.get(
-          `http://192.168.100.8:5000/api/products/${id}`
+          `${import.meta.env.VITE_API_URL}/api/products/${id}`
         );
         setProduct(data.product);
 
         // Fetch related products
         const relatedRes = await axios.get(
-          `http://192.168.100.8:5000/api/products?category=${data.product.category}`
+          `${import.meta.env.VITE_API_URL}/api/products?category=${data.product.category}`
         );
         const filtered = relatedRes.data.products.filter(
           (p) => p._id !== id

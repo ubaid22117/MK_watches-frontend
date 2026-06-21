@@ -14,7 +14,7 @@ const AdminProducts = () => {
 
   const fetchProducts = async () => {
     try {
-      const { data } = await axios.get('http://192.168.100.8:5000/api/products');
+      const { data } = await axios.get('${import.meta.env.VITE_API_URL}/api/products');
       setProducts(data.products);
     } catch (error) {
       console.error('Failed to load products:', error);
@@ -28,7 +28,7 @@ const AdminProducts = () => {
   const handleDelete = async (id, name) => {
     if (!window.confirm(`Are you sure you want to delete "${name}"?`)) return;
     try {
-      await axios.delete(`http://192.168.100.8:5000/api/products/${id}`, {
+      await axios.delete(`${import.meta.env.VITE_API_URL}/api/products/${id}`, {
         headers: { Authorization: `Bearer ${user?.token}` },
       });
       toast.success('Product deleted successfully!');

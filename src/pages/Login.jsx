@@ -28,7 +28,7 @@ const Login = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      const { data } = await axios.post('http://192.168.100.8:5000/api/auth/login', form);
+      const { data } = await axios.post('${import.meta.env.VITE_API_URL}/api/auth/login', form);
       login(data);
       toast.success(`Welcome back, ${data.name}!`);
       if (data.isAdmin) navigate('/admin');
@@ -48,7 +48,7 @@ const Login = () => {
   const handleResendVerification = async () => {
     setResendLoading(true);
     try {
-      await axios.post('http://192.168.100.8:5000/api/auth/resend-verification', {
+      await axios.post('${import.meta.env.VITE_API_URL}/api/auth/resend-verification', {
         email: form.email,
       });
       toast.success('Verification email sent! Check your inbox.');

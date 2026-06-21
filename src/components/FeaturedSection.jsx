@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
-const API_URL = 'http://192.168.100.8:5000';
+const API_URL = import.meta.env.VITE_API_URL;
 
 const FeaturedSection = () => {
   const [products, setProducts] = useState([]);
