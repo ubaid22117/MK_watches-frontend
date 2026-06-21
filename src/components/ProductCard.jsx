@@ -40,7 +40,7 @@ const ProductCard = ({ product }) => {
     >
       {/* Image */}
       <div className="product-img-wrap">
-        {product.images && product.images.length > 0 ? (
+        {product.images && product.images?.length > 0 ? (
           <img src={product.images[0].url} alt={product.name} className="product-img" />
         ) : (
           <div className="product-img-placeholder"><span>⌚</span></div>

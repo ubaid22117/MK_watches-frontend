@@ -6,6 +6,8 @@ import Layout from '../layout/Layout';
 import ProductCard from '../components/ProductCard';
 import '../styles/products.css';
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 const Products = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -21,14 +23,15 @@ const Products = () => {
     const fetchProducts = async () => {
       setLoading(true);
       try {
-        let url = '${import.meta.env.VITE_API_URL}/api/products?';
+        let url = `${API_URL}/api/products?`;
         if (keyword) url += `keyword=${keyword}&`;
         if (category) url += `category=${category}&`;
         if (sort) url += `sort=${sort}&`;
         const { data } = await axios.get(url);
-        setProducts(data.products);
+        setProducts(data.products || []);
       } catch (error) {
         console.error('Failed to load products:', error);
+        setProducts([]);
       } finally {
         setLoading(false);
       }

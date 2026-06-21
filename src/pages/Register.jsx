@@ -42,11 +42,11 @@ const Register = () => {
     }
     setLoading(true);
     try {
-      await axios.post('${import.meta.env.VITE_API_URL}/api/auth/register', {
-        name: form.name,
-        email: form.email,
-        password: form.password,
-      });
+    await axios.post(`${import.meta.env.VITE_API_URL}/api/auth/register`, {
+  name: form.name,
+  email: form.email,
+  password: form.password,
+});
       setRegisteredEmail(form.email);
       setSuccess(true);
     } catch (error) {

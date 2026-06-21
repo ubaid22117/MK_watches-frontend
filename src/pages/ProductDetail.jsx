@@ -72,7 +72,7 @@ const ProductDetail = () => {
     </Layout>
   );
 
-  const displayPrice = product.discountPrice || product.price;
+  const displayPrice = product?.discountPrice || product?.price || 0;
   const discountPercent = product.discountPrice
     ? Math.round(((product.price - product.discountPrice) / product.price) * 100)
     : 0;
@@ -82,7 +82,7 @@ const ProductDetail = () => {
   };
 
   const specs = product.specifications || {};
-  const hasSpecs = Object.values(specs).some(v => v && v.trim() !== '');
+ const hasSpecs = Object.values(specs).some(v => v && String(v).trim() !== '');
 
   return (
     <Layout>
@@ -120,7 +120,7 @@ const ProductDetail = () => {
                 </div>
 
                 <div className="main-image">
-                  {product.images && product.images.length > 0 ? (
+                  {product.images && product.images?.length > 0 ? (
                     <motion.img
                       key={selectedImg}
                       src={product.images[selectedImg].url}
@@ -136,7 +136,7 @@ const ProductDetail = () => {
               </div>
 
               {/* Thumbnails */}
-              {product.images && product.images.length > 1 && (
+              {product.images && product.images?.length > 1 && (
                 <div className="thumb-images">
                   {product.images.map((img, i) => (
                     <motion.img

@@ -13,7 +13,7 @@ const AdminUsers = () => {
 
   const fetchUsers = async () => {
     try {
-      const { data } = await axios.get('${import.meta.env.VITE_API_URL}/api/users', {
+      const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/api/users`, {
         headers: { Authorization: `Bearer ${user?.token}` },
       });
       setUsers(data.users);
