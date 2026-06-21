@@ -12,9 +12,14 @@ const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const { totalItems } = useCart();
-  const { wishlist } = useWishlist();
+
+  const cartData = useCart();
+  const wishlistData = useWishlist();
   const { user, logout } = useAuth();
+
+  const totalItems = cartData?.totalItems || 0;
+  const wishlist = wishlistData?.wishlist || [];
+
   const navigate = useNavigate();
   const location = useLocation();
 
