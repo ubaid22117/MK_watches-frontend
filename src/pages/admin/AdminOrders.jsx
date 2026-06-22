@@ -212,7 +212,7 @@ const AdminOrders = () => {
                       </select>
                     </>
                   )}
-                  <a href={`https://wa.me/92${order.customerInfo?.phone?.replace(/^0/, '')}?text=Hello ${order.customerInfo?.name}! Your SARVORA WATCHES order #${order._id.slice(-6).toUpperCase()} status has been updated to: *${order.status}*`}
+                  <a href={`https://wa.me/92${order.customerInfo?.phone?.replace(/^0/, '')}?text=Hello ${order.customerInfo?.name}! Your MK WATCHES order #${order._id.slice(-6).toUpperCase()} status has been updated to: *${order.status}*`}
                     target="_blank" rel="noreferrer" className="whatsapp-contact-btn">
                     📱 WhatsApp Customer
                   </a>

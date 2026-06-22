@@ -8,7 +8,7 @@ export const WishlistProvider = ({ children }) => {
 
   useEffect(() => {
     try {
-      const saved = localStorage.getItem('sarvoraWishlist');
+      const saved = localStorage.getItem('MKWishlist');
       if (saved) {
         const parsed = JSON.parse(saved);
         setWishlist(Array.isArray(parsed) ? parsed : []);
@@ -21,7 +21,7 @@ export const WishlistProvider = ({ children }) => {
 
   useEffect(() => {
     try {
-      localStorage.setItem('sarvoraWishlist', JSON.stringify(wishlist));
+      localStorage.setItem('MKWishlist', JSON.stringify(wishlist));
     } catch (error) {
       console.error('Wishlist save error:', error);
     }

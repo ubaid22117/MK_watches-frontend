@@ -145,7 +145,7 @@ const Checkout = () => {
       : `${paymentMethod} (Transaction ID: ${paymentDetails.transactionId})`;
 
     const message = `
-🕐 *SARVORA WATCHES — New Order*
+🕐 *MK_Watches — New Order*
 ━━━━━━━━━━━━━━━━━━━━━
 👤 *Customer Information:*
 Name: ${form.name}
@@ -209,7 +209,7 @@ ${itemsList}
     }
 
     const message = generateWhatsAppMessage();
-    window.open(`https://wa.me/923142371705?text=${message}`, '_blank');
+    window.open(`https://wa.me/923202645413?text=${message}`, '_blank');
     clearCart();
   };
 
@@ -340,8 +340,8 @@ ${itemsList}
                         <div className="payment-instructions">
                           <p><strong>Send payment to:</strong></p>
                           <p className="payment-number">
-                            0314-2371705
-                            <span className="payment-account-name"> (SARVORA WATCHES)</span>
+                            03202645413
+                            <span className="payment-account-name"> (MK WATCHES)</span>
                           </p>
                           <p className="payment-note">
                             After sending payment, enter your transaction ID below.
@@ -382,7 +382,7 @@ ${itemsList}
                           <p><strong>Bank transfer to our account:</strong></p>
                           <p className="payment-number">
                             PK00 ABCD 0000 0012 3456 7890
-                            <span className="payment-account-name"> (SARVORA WATCHES — Meezan Bank)</span>
+                            <span className="payment-account-name"> (MK WATCHES — Meezan Bank)</span>
                           </p>
                           <p className="payment-note">
                             Transfer using your card via your bank's app, then enter the reference number below.
@@ -436,7 +436,7 @@ ${itemsList}
                           <p><strong>Transfer to our bank account:</strong></p>
                           <p className="payment-number">
                             PK00 ABCD 0000 0012 3456 7890
-                            <span className="payment-account-name"> (SARVORA WATCHES — Meezan Bank)</span>
+                            <span className="payment-account-name"> (MK WATCHES — Meezan Bank)</span>
                           </p>
                           <p className="payment-note">
                             After transferring, enter the transaction/reference number below.
