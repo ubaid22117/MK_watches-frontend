@@ -90,7 +90,7 @@ const ProductDetail = () => {
 
   const generateWhatsAppMessage = () => {
     const message = `
-🕐 *SARVORA WATCHES — Product Inquiry*
+🕐 *MK WATCHES — Product Inquiry*
 ━━━━━━━━━━━━━━━━━━━━━
 I'm interested in this watch:
 
@@ -285,7 +285,7 @@ Please confirm availability and delivery details.
 
                 {/* ✅ Fixed: href aur attributes sahi jagah */}
                 <a
-                  href={`https://wa.me/923142371705?text=${generateWhatsAppMessage()}`}
+                  href={`https://wa.me/923202645413?text=${generateWhatsAppMessage()}`}
                   target="_blank"
                   rel="noreferrer"
                   className="detail-whatsapp-order-btn"
