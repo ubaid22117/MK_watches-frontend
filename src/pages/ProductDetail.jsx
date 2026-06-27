@@ -282,12 +282,14 @@ Please confirm availability and delivery details.
                   <FiZap />
                   Buy Now
                 </button>
-                
+
+                {/* ✅ Fixed: href aur attributes sahi jagah */}
+                <a
                   href={`https://wa.me/923142371705?text=${generateWhatsAppMessage()}`}
                   target="_blank"
                   rel="noreferrer"
                   className="detail-whatsapp-order-btn"
-                <a>
+                >
                   <span className="wa-icon">📱</span>
                   Order via WhatsApp
                 </a>
