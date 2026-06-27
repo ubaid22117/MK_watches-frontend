@@ -62,7 +62,7 @@ const Footer = () => {
                 <li>
                   <FiPhone className="contact-icon" />
                   <a href="https://wa.me/923202645413" target="_blank" rel="noreferrer">
-                    +92 314 2371705
+                    +92 3202645413
                   </a>
                 </li>
                 <li>

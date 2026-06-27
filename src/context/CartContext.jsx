@@ -8,7 +8,7 @@ export const CartProvider = ({ children }) => {
 
   useEffect(() => {
     try {
-      const saved = localStorage.getItem('MKCart');
+      const saved = localStorage.getItem('sarvoraCart');
       if (saved) {
         const parsed = JSON.parse(saved);
         setCartItems(Array.isArray(parsed) ? parsed : []);
@@ -21,7 +21,7 @@ export const CartProvider = ({ children }) => {
 
   useEffect(() => {
     try {
-      localStorage.setItem('MKCart', JSON.stringify(cartItems));
+      localStorage.setItem('sarvoraCart', JSON.stringify(cartItems));
     } catch (error) {
       console.error('Cart save error:', error);
     }
@@ -60,7 +60,12 @@ export const CartProvider = ({ children }) => {
 
   const clearCart = useCallback(() => {
     setCartItems([]);
-    localStorage.removeItem('MKCart');
+    localStorage.removeItem('sarvoraCart');
+  }, []);
+
+  // Used for "Buy Now" — replaces cart with just this one item
+  const buyNow = useCallback((product, quantity = 1) => {
+    setCartItems([{ ...product, quantity }]);
   }, []);
 
   const safeCartItems = Array.isArray(cartItems) ? cartItems : [];
@@ -76,7 +81,7 @@ export const CartProvider = ({ children }) => {
   return (
     <CartContext.Provider value={{
       cartItems: safeCartItems, addToCart, removeFromCart,
-      updateQuantity, clearCart, totalPrice, totalItems
+      updateQuantity, clearCart, totalPrice, totalItems, buyNow
     }}>
       {children}
     </CartContext.Provider>

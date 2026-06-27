@@ -6,8 +6,13 @@ import Layout from '../layout/Layout';
 import { useCart } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
 import ProductCard from '../components/ProductCard';
-import { FiHeart, FiShoppingCart, FiArrowLeft, FiTruck, FiShield, FiRefreshCw } from 'react-icons/fi';
+import {
+  FiHeart, FiShoppingCart, FiArrowLeft, FiTruck,
+  FiShield, FiRefreshCw, FiZap
+} from 'react-icons/fi';
 import '../styles/productdetail.css';
+
+const API_URL = import.meta.env.VITE_API_URL;
 
 const ProductDetail = () => {
   const { id } = useParams();
@@ -18,21 +23,18 @@ const ProductDetail = () => {
   const [selectedImg, setSelectedImg] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState('description');
-  const { addToCart } = useCart();
+  const { addToCart, buyNow } = useCart();
   const { addToWishlist, isInWishlist } = useWishlist();
 
   useEffect(() => {
     const fetchProduct = async () => {
       setLoading(true);
       try {
-        const { data } = await axios.get(
-          `${import.meta.env.VITE_API_URL}/api/products/${id}`
-        );
+        const { data } = await axios.get(`${API_URL}/api/products/${id}`);
         setProduct(data.product);
 
-        // Fetch related products
         const relatedRes = await axios.get(
-          `${import.meta.env.VITE_API_URL}/api/products?category=${data.product.category}`
+          `${API_URL}/api/products?category=${data.product.category}`
         );
         const filtered = relatedRes.data.products.filter(
           (p) => p._id !== id
@@ -72,7 +74,7 @@ const ProductDetail = () => {
     </Layout>
   );
 
-  const displayPrice = product?.discountPrice || product?.price || 0;
+  const displayPrice = product.discountPrice || product.price;
   const discountPercent = product.discountPrice
     ? Math.round(((product.price - product.discountPrice) / product.price) * 100)
     : 0;
@@ -81,8 +83,30 @@ const ProductDetail = () => {
     addToCart(product, quantity);
   };
 
+  const handleBuyNow = () => {
+    buyNow(product, quantity);
+    navigate('/checkout');
+  };
+
+  const generateWhatsAppMessage = () => {
+    const message = `
+🕐 *SARVORA WATCHES — Product Inquiry*
+━━━━━━━━━━━━━━━━━━━━━
+I'm interested in this watch:
+
+*${product.name}*
+Category: ${product.category}
+Price: Rs. ${displayPrice.toLocaleString()}
+Quantity: ${quantity}
+
+Please confirm availability and delivery details.
+━━━━━━━━━━━━━━━━━━━━━
+    `.trim();
+    return encodeURIComponent(message);
+  };
+
   const specs = product.specifications || {};
- const hasSpecs = Object.values(specs).some(v => v && String(v).trim() !== '');
+  const hasSpecs = Object.values(specs).some(v => v && v.trim() !== '');
 
   return (
     <Layout>
@@ -111,7 +135,6 @@ const ProductDetail = () => {
               transition={{ duration: 0.5 }}>
 
               <div className="main-image-wrap">
-                {/* Badges */}
                 <div className="detail-badges">
                   {product.stock === 0 && <span className="badge badge-red">Out of Stock</span>}
                   {discountPercent > 0 && <span className="badge badge-gold">-{discountPercent}% OFF</span>}
@@ -120,7 +143,7 @@ const ProductDetail = () => {
                 </div>
 
                 <div className="main-image">
-                  {product.images && product.images?.length > 0 ? (
+                  {product.images && product.images.length > 0 ? (
                     <motion.img
                       key={selectedImg}
                       src={product.images[selectedImg].url}
@@ -135,8 +158,7 @@ const ProductDetail = () => {
                 </div>
               </div>
 
-              {/* Thumbnails */}
-              {product.images && product.images?.length > 1 && (
+              {product.images && product.images.length > 1 && (
                 <div className="thumb-images">
                   {product.images.map((img, i) => (
                     <motion.img
@@ -161,7 +183,6 @@ const ProductDetail = () => {
               <p className="detail-category">{product.category}</p>
               <h1 className="detail-name">{product.name}</h1>
 
-              {/* Rating Row */}
               <div className="detail-rating-row">
                 <div className="detail-stars">
                   {[1,2,3,4,5].map((star) => (
@@ -179,7 +200,6 @@ const ProductDetail = () => {
                 </span>
               </div>
 
-              {/* Price */}
               <div className="detail-price-block">
                 <span className="detail-price-main">
                   Rs. {displayPrice.toLocaleString()}
@@ -196,7 +216,6 @@ const ProductDetail = () => {
                 )}
               </div>
 
-              {/* Stock Status */}
               <div className="detail-stock-badge">
                 {product.stock > 5 ? (
                   <span className="stock-high">✓ In Stock ({product.stock} available)</span>
@@ -207,13 +226,11 @@ const ProductDetail = () => {
                 )}
               </div>
 
-              {/* Short Description */}
               <p className="detail-short-desc">
                 {product.description?.slice(0, 150)}
                 {product.description?.length > 150 ? '...' : ''}
               </p>
 
-              {/* Quantity */}
               {product.stock > 0 && (
                 <div className="detail-quantity-row">
                   <span className="qty-label">Quantity</span>
@@ -236,7 +253,7 @@ const ProductDetail = () => {
                 </div>
               )}
 
-              {/* Action Buttons */}
+              {/* Primary Buttons */}
               <div className="detail-action-buttons">
                 <button
                   className="detail-cart-btn"
@@ -255,27 +272,48 @@ const ProductDetail = () => {
                 </button>
               </div>
 
+              {/* Secondary Buttons — Buy Now + WhatsApp */}
+              <div className="detail-secondary-buttons">
+                <button
+                  className="detail-buynow-btn"
+                  onClick={handleBuyNow}
+                  disabled={product.stock === 0}
+                >
+                  <FiZap />
+                  Buy Now
+                </button>
+                
+                  href={`https://wa.me/923142371705?text=${generateWhatsAppMessage()}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="detail-whatsapp-order-btn"
+                <a>
+                  <span className="wa-icon">📱</span>
+                  Order via WhatsApp
+                </a>
+              </div>
+
               {/* Delivery Info */}
               <div className="detail-delivery-info">
                 <div className="delivery-item">
                   <FiTruck className="delivery-icon" />
                   <div>
-                    <p className="delivery-title">Free Delivery</p>
-                    <p className="delivery-sub">On all orders nationwide</p>
+                    <p className="delivery-title">Free Nationwide Delivery</p>
+                    <p className="delivery-sub">Fast & secure shipping on all orders</p>
                   </div>
                 </div>
                 <div className="delivery-item">
                   <FiShield className="delivery-icon" />
                   <div>
-                    <p className="delivery-title">Authentic Product</p>
-                    <p className="delivery-sub">100% genuine guarantee</p>
+                    <p className="delivery-title">100% Authentic</p>
+                    <p className="delivery-sub">Every watch is genuine & quality tested</p>
                   </div>
                 </div>
                 <div className="delivery-item">
                   <FiRefreshCw className="delivery-icon" />
                   <div>
-                    <p className="delivery-title">Easy Returns</p>
-                    <p className="delivery-sub">7-day return policy</p>
+                    <p className="delivery-title">7-Day Easy Returns</p>
+                    <p className="delivery-sub">Not satisfied? Return hassle-free</p>
                   </div>
                 </div>
               </div>
