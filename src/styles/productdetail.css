@@ -1,3 +1,13 @@
+/* ============================================
+   PRODUCT DETAIL — FULLY RESPONSIVE CSS
+   Breakpoints: 1200 | 992 | 768 | 576 | 400
+   ============================================ */
+
+/* ─── Base Reset ─────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
 /* ─── Detail Page ────────────────────────── */
 .detail-page {
   padding: 100px 0 80px;
@@ -8,8 +18,8 @@
 .detail-breadcrumb {
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin-bottom: 2.5rem;
+  gap: 6px;
+  margin-bottom: 2rem;
   flex-wrap: wrap;
 }
 
@@ -18,6 +28,7 @@
   font-size: 0.82rem;
   cursor: pointer;
   transition: color 0.3s;
+  flex-shrink: 0;
 }
 
 .breadcrumb-link:hover { color: #D4AF37; }
@@ -25,6 +36,7 @@
 .breadcrumb-sep {
   color: #333;
   font-size: 0.82rem;
+  flex-shrink: 0;
 }
 
 .breadcrumb-current {
@@ -33,14 +45,14 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 200px;
+  max-width: 180px;
 }
 
 /* ─── Main Grid ──────────────────────────── */
 .detail-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 4rem;
+  gap: 3.5rem;
   align-items: start;
   margin-bottom: 4rem;
 }
@@ -57,8 +69,9 @@
   overflow: hidden;
   background: linear-gradient(135deg, #0f0f0f, #1a1a1a);
   border: 1px solid rgba(212,175,55,0.15);
-  aspect-ratio: 1;
+  aspect-ratio: 1 / 1;
   margin-bottom: 12px;
+  width: 100%;
 }
 
 .detail-badges {
@@ -81,6 +94,7 @@
   height: 100%;
   object-fit: cover;
   transition: transform 0.5s ease;
+  display: block;
 }
 
 .main-image-wrap:hover .main-image img {
@@ -94,10 +108,11 @@
   align-items: center;
   justify-content: center;
   font-size: 8rem;
-  min-height: 400px;
+  min-height: 300px;
   color: #333;
 }
 
+/* Thumbnails */
 .thumb-images {
   display: flex;
   gap: 10px;
@@ -105,19 +120,18 @@
 }
 
 .thumb {
-  width: 72px;
-  height: 72px;
+  width: 68px;
+  height: 68px;
   object-fit: cover;
   border-radius: 8px;
   border: 2px solid rgba(255,255,255,0.06);
   cursor: pointer;
   transition: all 0.25s;
   background: #111;
+  flex-shrink: 0;
 }
 
-.thumb:hover {
-  border-color: rgba(212,175,55,0.4);
-}
+.thumb:hover { border-color: rgba(212,175,55,0.4); }
 
 .thumb-active {
   border-color: #D4AF37 !important;
@@ -127,6 +141,7 @@
 /* ─── Product Info ───────────────────────── */
 .detail-info {
   padding-top: 0.5rem;
+  min-width: 0;
 }
 
 .detail-category {
@@ -140,11 +155,12 @@
 
 .detail-name {
   font-family: 'Playfair Display', serif;
-  font-size: 2rem;
+  font-size: clamp(1.3rem, 2.5vw, 2rem);
   font-weight: 700;
   margin: 0 0 1rem;
-  line-height: 1.2;
+  line-height: 1.25;
   color: white;
+  word-break: break-word;
 }
 
 /* ─── Rating ─────────────────────────────── */
@@ -153,6 +169,7 @@
   align-items: center;
   gap: 8px;
   margin-bottom: 1.2rem;
+  flex-wrap: wrap;
 }
 
 .detail-stars {
@@ -175,10 +192,10 @@
 .detail-price-block {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   flex-wrap: wrap;
   margin-bottom: 1rem;
-  padding: 1.2rem;
+  padding: 1rem 1.2rem;
   background: rgba(212,175,55,0.05);
   border: 1px solid rgba(212,175,55,0.12);
   border-radius: 10px;
@@ -186,25 +203,26 @@
 
 .detail-price-main {
   font-family: 'Playfair Display', serif;
-  font-size: 2rem;
+  font-size: clamp(1.3rem, 3vw, 2rem);
   font-weight: 700;
   color: #D4AF37;
   line-height: 1;
 }
 
 .detail-price-old {
-  font-size: 1rem;
+  font-size: 0.95rem;
   color: #444;
   text-decoration: line-through;
 }
 
 .detail-price-save {
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   color: #2ecc71;
   background: rgba(46,204,113,0.1);
   padding: 3px 10px;
   border-radius: 20px;
   border: 1px solid rgba(46,204,113,0.2);
+  white-space: nowrap;
 }
 
 /* ─── Stock ──────────────────────────────── */
@@ -226,6 +244,7 @@
   margin-bottom: 1.5rem;
   padding-bottom: 1.5rem;
   border-bottom: 1px solid rgba(255,255,255,0.06);
+  word-break: break-word;
 }
 
 /* ─── Quantity ───────────────────────────── */
@@ -240,7 +259,6 @@
 .qty-label {
   color: #888;
   font-size: 0.85rem;
-  min-width: 60px;
 }
 
 .qty-controls {
@@ -263,6 +281,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
 }
 
 .qty-controls button:hover:not(:disabled) {
@@ -275,11 +294,11 @@
 }
 
 .qty-controls span {
-  padding: 0 20px;
+  padding: 0 18px;
   color: white;
   font-size: 0.95rem;
   font-weight: 600;
-  min-width: 50px;
+  min-width: 46px;
   text-align: center;
   background: rgba(212,175,55,0.03);
 }
@@ -287,9 +306,10 @@
 .qty-total {
   font-size: 0.85rem;
   color: #888;
+  white-space: nowrap;
 }
 
-/* ─── Action Buttons (Primary) ───────────── */
+/* ─── Primary Buttons ────────────────────── */
 .detail-action-buttons {
   display: flex;
   gap: 12px;
@@ -298,12 +318,13 @@
 
 .detail-cart-btn {
   flex: 1;
-  padding: 14px 20px;
+  min-width: 0;
+  padding: 14px 16px;
   background: linear-gradient(135deg, #D4AF37, #A0820A);
   color: #000;
   border: none;
   border-radius: 10px;
-  font-size: 0.9rem;
+  font-size: 0.88rem;
   font-weight: 700;
   letter-spacing: 0.5px;
   cursor: pointer;
@@ -313,6 +334,7 @@
   gap: 8px;
   transition: all 0.3s;
   font-family: 'Poppins', sans-serif;
+  white-space: nowrap;
 }
 
 .detail-cart-btn:hover:not(:disabled) {
@@ -330,7 +352,7 @@
 }
 
 .detail-wish-btn {
-  padding: 14px 20px;
+  padding: 14px 18px;
   background: transparent;
   color: #888;
   border: 1px solid rgba(255,255,255,0.1);
@@ -340,10 +362,12 @@
   cursor: pointer;
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
   transition: all 0.3s;
   font-family: 'Poppins', sans-serif;
   white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .detail-wish-btn:hover {
@@ -357,7 +381,7 @@
   background: rgba(212,175,55,0.08);
 }
 
-/* ─── Secondary Buttons (Buy Now + WhatsApp) ── */
+/* ─── Secondary Buttons ──────────────────── */
 .detail-secondary-buttons {
   display: flex;
   gap: 12px;
@@ -366,7 +390,8 @@
 
 .detail-buynow-btn {
   flex: 1;
-  padding: 13px 20px;
+  min-width: 0;
+  padding: 13px 16px;
   background: transparent;
   color: #D4AF37;
   border: 1.5px solid #D4AF37;
@@ -381,6 +406,7 @@
   gap: 8px;
   transition: all 0.3s;
   font-family: 'Poppins', sans-serif;
+  white-space: nowrap;
 }
 
 .detail-buynow-btn:hover:not(:disabled) {
@@ -398,7 +424,8 @@
 
 .detail-whatsapp-order-btn {
   flex: 1;
-  padding: 13px 20px;
+  min-width: 0;
+  padding: 13px 16px;
   background: linear-gradient(135deg, #25D366, #128C7E);
   color: white;
   border: none;
@@ -414,6 +441,7 @@
   transition: all 0.3s;
   font-family: 'Poppins', sans-serif;
   text-decoration: none;
+  white-space: nowrap;
 }
 
 .detail-whatsapp-order-btn:hover {
@@ -422,9 +450,7 @@
   box-shadow: 0 8px 22px rgba(37,211,102,0.3);
 }
 
-.wa-icon {
-  font-size: 1.05rem;
-}
+.wa-icon { font-size: 1.05rem; }
 
 /* ─── Delivery Info ──────────────────────── */
 .detail-delivery-info {
@@ -472,8 +498,11 @@
   display: flex;
   gap: 0;
   border-bottom: 1px solid rgba(212,175,55,0.15);
-  margin-bottom: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
 }
+
+.detail-tabs::-webkit-scrollbar { display: none; }
 
 .detail-tab {
   padding: 14px 28px;
@@ -488,6 +517,8 @@
   font-family: 'Poppins', sans-serif;
   border-bottom: 2px solid transparent;
   margin-bottom: -1px;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .detail-tab:hover { color: #D4AF37; }
@@ -510,6 +541,7 @@
   font-size: 0.95rem;
   line-height: 1.9;
   margin: 0;
+  word-break: break-word;
 }
 
 /* ─── Specs Table ────────────────────────── */
@@ -523,8 +555,8 @@
 
 .spec-row {
   display: grid;
-  grid-template-columns: 200px 1fr;
-  padding: 14px 16px;
+  grid-template-columns: 180px 1fr;
+  padding: 13px 16px;
   border-bottom: 1px solid rgba(212,175,55,0.06);
 }
 
@@ -572,78 +604,167 @@
 .badge-new  { background: rgba(52,152,219,0.9); color: white; }
 .badge-best { background: rgba(155,89,182,0.9); color: white; }
 
-/* ─── Responsive ─────────────────────────── */
-@media (max-width: 768px) {
+/* ============================================
+   RESPONSIVE BREAKPOINTS
+   ============================================ */
+
+/* ── Tablet landscape (≤1100px) ── */
+@media (max-width: 1100px) {
+  .detail-grid {
+    gap: 2.5rem;
+  }
+}
+
+/* ── Tablet portrait (≤900px) ── */
+@media (max-width: 900px) {
   .detail-grid {
     grid-template-columns: 1fr;
-    gap: 1.5rem;
+    gap: 2rem;
+    margin-bottom: 3rem;
   }
 
   .detail-images {
     position: static;
+    max-width: 500px;
+    margin: 0 auto;
+    width: 100%;
   }
 
-  .detail-name {
-    font-size: 1.4rem;
-  }
-
-  .detail-price-main {
-    font-size: 1.3rem;
+  .detail-info {
+    padding-top: 0;
   }
 }
 
-@media (max-width: 480px) {
+/* ── Mobile large (≤640px) ── */
+@media (max-width: 640px) {
   .detail-page {
-    padding: 80px 0 60px;
+    padding: 85px 0 60px;
   }
 
-  /* Breadcrumb */
+  .detail-breadcrumb {
+    margin-bottom: 1.5rem;
+    gap: 5px;
+  }
+
   .breadcrumb-link,
   .breadcrumb-sep,
   .breadcrumb-current {
     font-size: 0.75rem;
   }
 
-  /* Name & price */
-  .detail-name {
-    font-size: 1.25rem;
+  .breadcrumb-current {
+    max-width: 140px;
   }
 
+  .detail-images {
+    max-width: 100%;
+  }
+
+  .detail-name {
+    font-size: 1.35rem;
+  }
+
+  /* Price block */
   .detail-price-block {
+    padding: 0.9rem 1rem;
     gap: 8px;
-    padding: 1rem;
   }
 
   .detail-price-main {
-    font-size: 1.2rem;
+    font-size: 1.4rem;
+    width: 100%;
   }
 
-  /* Thumbnails scroll horizontally */
+  /* Thumbs horizontal scroll */
   .thumb-images {
     flex-wrap: nowrap;
     overflow-x: auto;
-    padding-bottom: 6px;
+    scroll-snap-type: x mandatory;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
+    padding-bottom: 4px;
+    gap: 8px;
   }
 
-  .thumb-images::-webkit-scrollbar {
-    display: none;
-  }
+  .thumb-images::-webkit-scrollbar { display: none; }
 
   .thumb {
-    flex-shrink: 0;
+    scroll-snap-align: start;
+    width: 60px;
+    height: 60px;
   }
 
-  /* Quantity row wraps */
+  /* Action buttons — side by side still, just smaller */
+  .detail-action-buttons,
+  .detail-secondary-buttons {
+    gap: 10px;
+  }
+
+  .detail-cart-btn,
+  .detail-buynow-btn,
+  .detail-whatsapp-order-btn {
+    font-size: 0.82rem;
+    padding: 13px 12px;
+  }
+
+  .detail-wish-btn {
+    padding: 13px 14px;
+    font-size: 0.82rem;
+  }
+
+  /* Quantity */
   .detail-quantity-row {
-    flex-wrap: wrap;
     gap: 0.75rem;
   }
 
-  .qty-total {
-    width: 100%;
-    margin-top: 2px;
+  .qty-controls span {
+    padding: 0 14px;
+    min-width: 40px;
+  }
+
+  /* Tabs */
+  .detail-tab {
+    padding: 12px 18px;
+    font-size: 0.8rem;
+    letter-spacing: 0.5px;
+  }
+
+  .detail-tab-content {
+    padding: 1.5rem 1.25rem;
+  }
+}
+
+/* ── Mobile small (≤480px) ── */
+@media (max-width: 480px) {
+  .detail-page {
+    padding: 80px 0 50px;
+  }
+
+  .detail-grid {
+    margin-bottom: 2rem;
+  }
+
+  .detail-name {
+    font-size: 1.2rem;
+  }
+
+  .detail-category {
+    font-size: 0.68rem;
+    letter-spacing: 2px;
+  }
+
+  /* Price */
+  .detail-price-main {
+    font-size: 1.25rem;
+  }
+
+  .detail-price-old {
+    font-size: 0.85rem;
+  }
+
+  .detail-price-save {
+    font-size: 0.72rem;
+    padding: 2px 8px;
   }
 
   /* Primary buttons stack */
@@ -651,14 +772,16 @@
     flex-direction: column;
   }
 
-  .detail-wish-btn {
-    justify-content: center;
-    width: 100%;
-  }
-
   .detail-cart-btn {
     width: 100%;
+    padding: 14px;
+    font-size: 0.9rem;
+  }
+
+  .detail-wish-btn {
+    width: 100%;
     justify-content: center;
+    padding: 13px;
   }
 
   /* Secondary buttons stack */
@@ -670,27 +793,105 @@
   .detail-whatsapp-order-btn {
     width: 100%;
     justify-content: center;
+    padding: 13px;
+    font-size: 0.88rem;
   }
 
-  /* Tabs */
-  .detail-tab {
-    padding: 12px 14px;
-    font-size: 0.78rem;
-    letter-spacing: 0.5px;
+  /* Quantity total full row */
+  .qty-total {
+    width: 100%;
+    margin-top: 2px;
+    font-size: 0.82rem;
   }
 
-  .detail-tab-content {
-    padding: 1.25rem;
-  }
-
-  /* Specs */
+  /* Specs single col */
   .spec-row {
     grid-template-columns: 1fr;
-    gap: 4px;
+    gap: 3px;
+    padding: 12px 14px;
   }
 
   .spec-key {
     color: #D4AF37;
-    font-size: 0.78rem;
+    font-size: 0.75rem;
+    letter-spacing: 0.3px;
+  }
+
+  .spec-val {
+    font-size: 0.85rem;
+  }
+
+  /* Tab content */
+  .detail-tab {
+    padding: 11px 14px;
+    font-size: 0.75rem;
+  }
+
+  .detail-tab-content {
+    padding: 1.25rem 1rem;
+  }
+
+  /* Delivery info */
+  .detail-delivery-info {
+    padding: 1rem;
+    gap: 10px;
+  }
+
+  .delivery-title {
+    font-size: 0.82rem;
+  }
+
+  .delivery-sub {
+    font-size: 0.72rem;
+  }
+
+  /* Badges smaller */
+  .badge {
+    font-size: 0.62rem;
+    padding: 3px 8px;
+  }
+}
+
+/* ── Very small (≤360px) ── */
+@media (max-width: 360px) {
+  .detail-name {
+    font-size: 1.1rem;
+  }
+
+  .detail-price-main {
+    font-size: 1.1rem;
+  }
+
+  .qty-controls button {
+    width: 34px;
+    height: 34px;
+  }
+
+  .qty-controls span {
+    padding: 0 10px;
+    min-width: 36px;
+    font-size: 0.88rem;
+  }
+
+  .detail-cart-btn,
+  .detail-wish-btn,
+  .detail-buynow-btn,
+  .detail-whatsapp-order-btn {
+    font-size: 0.82rem;
+    padding: 12px 10px;
+  }
+
+  .thumb {
+    width: 52px;
+    height: 52px;
+  }
+
+  .detail-tabs {
+    gap: 0;
+  }
+
+  .detail-tab {
+    padding: 10px 12px;
+    font-size: 0.72rem;
   }
 }

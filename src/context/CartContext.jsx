@@ -8,7 +8,7 @@ export const CartProvider = ({ children }) => {
 
   useEffect(() => {
     try {
-      const saved = localStorage.getItem('sarvoraCart');
+      const saved = localStorage.getItem('mkCart');
       if (saved) {
         const parsed = JSON.parse(saved);
         setCartItems(Array.isArray(parsed) ? parsed : []);
@@ -21,7 +21,7 @@ export const CartProvider = ({ children }) => {
 
   useEffect(() => {
     try {
-      localStorage.setItem('sarvoraCart', JSON.stringify(cartItems));
+      localStorage.setItem('mkCart', JSON.stringify(cartItems));
     } catch (error) {
       console.error('Cart save error:', error);
     }
@@ -60,7 +60,7 @@ export const CartProvider = ({ children }) => {
 
   const clearCart = useCallback(() => {
     setCartItems([]);
-    localStorage.removeItem('sarvoraCart');
+    localStorage.removeItem('mkCart');
   }, []);
 
   // Used for "Buy Now" — replaces cart with just this one item
