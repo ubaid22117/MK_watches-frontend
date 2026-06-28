@@ -23,7 +23,6 @@ const ProductDetail = () => {
   const [selectedImg, setSelectedImg] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState('description');
-  const [waLoading, setWaLoading] = useState(false);
   const { addToCart, buyNow } = useCart();
   const { addToWishlist, isInWishlist } = useWishlist();
 
@@ -101,44 +100,42 @@ const ProductDetail = () => {
     `\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n` +
     `Please confirm availability and delivery details.`;
 
-  // ── Step 1: Image download karo customer ke phone mein ─────────
-  const downloadProductImage = () => {
+  // ── Main handler: Web Share API (image + text) ────────────────
+  const handleWhatsAppOrder = async () => {
+    const orderText = buildOrderText();
     const firstImageUrl = product.images?.[0]?.url;
-    if (!firstImageUrl) return;
+    const canShareFiles =
+      firstImageUrl &&
+      typeof navigator.share === 'function' &&
+      typeof navigator.canShare === 'function';
 
-    // Invisible <a> tag se download trigger karo
-    const a = document.createElement('a');
-    a.href = firstImageUrl;
-    a.download = `${product.name.replace(/\s+/g, '-')}.jpg`;
-    a.target = '_blank'; // fallback if download attr blocked
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-  };
-
-  // ── Step 2: WhatsApp seller ke number pe open karo ───────────
-  const openWhatsApp = () => {
-    const waUrl =
-      `https://wa.me/923142371705?text=${encodeURIComponent(buildOrderText())}`;
-    window.open(waUrl, '_blank', 'noreferrer');
-  };
-
-  // ── Main handler: pehle image download, phir WhatsApp open ───
-  const handleWhatsAppOrder = () => {
-    const hasImage = product.images && product.images.length > 0;
-    setWaLoading(true);
-
-    if (hasImage) {
-      downloadProductImage();
-      // 800ms delay — download start ho, phir WA khule
-      setTimeout(() => {
-        openWhatsApp();
-        setWaLoading(false);
-      }, 800);
-    } else {
-      openWhatsApp();
-      setWaLoading(false);
+    if (canShareFiles) {
+      try {
+        const res = await fetch(firstImageUrl);
+        const blob = await res.blob();
+        const ext = blob.type.includes('png') ? 'png'
+          : blob.type.includes('webp') ? 'webp' : 'jpg';
+        const file = new File(
+          [blob],
+          `${product.name.replace(/\s+/g, '-')}.${ext}`,
+          { type: blob.type }
+        );
+        if (navigator.canShare({ files: [file] })) {
+          await navigator.share({ files: [file], text: orderText });
+          return;
+        }
+      } catch (err) {
+        if (err.name === 'AbortError') return;
+        console.warn('File share failed, fallback:', err);
+      }
     }
+
+    // Fallback: wa.me link (desktop / unsupported browsers)
+    window.open(
+      `https://wa.me/923142371705?text=${encodeURIComponent(orderText)}`,
+      '_blank',
+      'noreferrer'
+    );
   };
 
   const specs = product.specifications || {};
@@ -324,10 +321,10 @@ const ProductDetail = () => {
                 <button
                   className="detail-whatsapp-order-btn"
                   onClick={handleWhatsAppOrder}
-                  disabled={product.stock === 0 || waLoading}
+                  disabled={product.stock === 0}
                 >
-                  <span className="wa-icon">{waLoading ? '⏳' : '📱'}</span>
-                  {waLoading ? 'Sending...' : 'Order via WhatsApp'}
+                  <span className="wa-icon">📱</span>
+                  Order via WhatsApp
                 </button>
               </div>
 
