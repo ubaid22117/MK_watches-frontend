@@ -7,7 +7,7 @@ import { useCart } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
 import ProductCard from '../components/ProductCard';
 import {
-  FiHeart, FiShoppingCart, FiArrowLeft, FiTruck,
+  FiHeart, FiShoppingCart, FiTruck,
   FiShield, FiRefreshCw, FiZap
 } from 'react-icons/fi';
 import '../styles/productdetail.css';
@@ -36,9 +36,9 @@ const ProductDetail = () => {
         const relatedRes = await axios.get(
           `${API_URL}/api/products?category=${data.product.category}`
         );
-        const filtered = relatedRes.data.products.filter(
-          (p) => p._id !== id
-        ).slice(0, 4);
+        const filtered = relatedRes.data.products
+          .filter((p) => p._id !== id)
+          .slice(0, 4);
         setRelatedProducts(filtered);
       } catch (error) {
         console.error('Product not found:', error);
@@ -79,30 +79,86 @@ const ProductDetail = () => {
     ? Math.round(((product.price - product.discountPrice) / product.price) * 100)
     : 0;
 
-  const handleAddToCart = () => {
-    addToCart(product, quantity);
-  };
+  const handleAddToCart = () => addToCart(product, quantity);
 
   const handleBuyNow = () => {
     buyNow(product, quantity);
     navigate('/checkout');
   };
 
-  const generateWhatsAppMessage = () => {
-    const message = `
-🕐 *MK WATCHES — Product Inquiry*
-━━━━━━━━━━━━━━━━━━━━━
-I'm interested in this watch:
+  // ── Order text (used in both share paths) ────────────────────
+  const buildOrderText = () =>
+    `🕐 *SARVORA WATCHES — New Order*\n` +
+    `━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n` +
+    `🛒 *Product Details*\n` +
+    `*Name:* ${product.name}\n` +
+    `*Category:* ${product.category}\n` +
+    `*Price:* Rs. ${displayPrice.toLocaleString()}\n` +
+    `*Quantity:* ${quantity}\n` +
+    `*Total:* Rs. ${(displayPrice * quantity).toLocaleString()}` +
+    (discountPercent > 0 ? `\n*Discount:* ${discountPercent}% OFF` : '') +
+    `\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n` +
+    `Please confirm availability and delivery details.`;
 
-*${product.name}*
-Category: ${product.category}
-Price: Rs. ${displayPrice.toLocaleString()}
-Quantity: ${quantity}
+  // ── Image ko blob mein convert karo (CORS-safe canvas trick) ──
+  const fetchImageBlob = (url) =>
+    new Promise((resolve, reject) => {
+      // Method 1: seedha fetch (works if CORS allowed)
+      fetch(url, { mode: 'cors' })
+        .then((r) => r.blob())
+        .then(resolve)
+        .catch(() => {
+          // Method 2: canvas trick — CORS nahi chahiye
+          const img = new Image();
+          img.crossOrigin = 'anonymous';
+          img.onload = () => {
+            const canvas = document.createElement('canvas');
+            canvas.width = img.naturalWidth;
+            canvas.height = img.naturalHeight;
+            canvas.getContext('2d').drawImage(img, 0, 0);
+            canvas.toBlob((blob) => {
+              blob ? resolve(blob) : reject(new Error('Canvas toBlob failed'));
+            }, 'image/jpeg', 0.92);
+          };
+          img.onerror = () => reject(new Error('Image load failed'));
+          img.src = url;
+        });
+    });
 
-Please confirm availability and delivery details.
-━━━━━━━━━━━━━━━━━━━━━
-    `.trim();
-    return encodeURIComponent(message);
+  // ── Main handler: Web Share API (image + text) ────────────────
+  const handleWhatsAppOrder = async () => {
+    const orderText = buildOrderText();
+    const firstImageUrl = product.images?.[0]?.url;
+
+    const supportsShare =
+      typeof navigator.share === 'function' &&
+      typeof navigator.canShare === 'function';
+
+    if (firstImageUrl && supportsShare) {
+      try {
+        const blob = await fetchImageBlob(firstImageUrl);
+        const file = new File(
+          [blob],
+          `${product.name.replace(/\s+/g, '-')}.jpg`,
+          { type: 'image/jpeg' }
+        );
+
+        if (navigator.canShare({ files: [file] })) {
+          await navigator.share({ files: [file], text: orderText });
+          return; // Share ho gaya, done
+        }
+      } catch (err) {
+        if (err.name === 'AbortError') return; // User ne cancel kiya
+        console.warn('Share with image failed, using text fallback:', err);
+      }
+    }
+
+    // Fallback: wa.me link (desktop / unsupported browsers)
+    window.open(
+      `https://wa.me/923142371705?text=${encodeURIComponent(orderText)}`,
+      '_blank',
+      'noreferrer'
+    );
   };
 
   const specs = product.specifications || {};
@@ -119,8 +175,10 @@ Please confirm availability and delivery details.
             <span className="breadcrumb-sep">›</span>
             <span onClick={() => navigate('/products')} className="breadcrumb-link">Collection</span>
             <span className="breadcrumb-sep">›</span>
-            <span onClick={() => navigate(`/products?category=${product.category}`)}
-              className="breadcrumb-link">{product.category}</span>
+            <span
+              onClick={() => navigate(`/products?category=${product.category}`)}
+              className="breadcrumb-link"
+            >{product.category}</span>
             <span className="breadcrumb-sep">›</span>
             <span className="breadcrumb-current">{product.name}</span>
           </div>
@@ -283,16 +341,14 @@ Please confirm availability and delivery details.
                   Buy Now
                 </button>
 
-                {/* ✅ Fixed: href aur attributes sahi jagah */}
-                <a
-                  href={`https://wa.me/923202645413?text=${generateWhatsAppMessage()}`}
-                  target="_blank"
-                  rel="noreferrer"
+                <button
                   className="detail-whatsapp-order-btn"
+                  onClick={handleWhatsAppOrder}
+                  disabled={product.stock === 0}
                 >
                   <span className="wa-icon">📱</span>
                   Order via WhatsApp
-                </a>
+                </button>
               </div>
 
               {/* Delivery Info */}
@@ -360,12 +416,12 @@ Please confirm availability and delivery details.
                   {hasSpecs ? (
                     <div className="specs-table">
                       {[
-                        { label: 'Movement', value: specs.movement },
-                        { label: 'Case Material', value: specs.caseMaterial },
-                        { label: 'Case Size', value: specs.caseSize },
+                        { label: 'Movement',         value: specs.movement },
+                        { label: 'Case Material',    value: specs.caseMaterial },
+                        { label: 'Case Size',        value: specs.caseSize },
                         { label: 'Water Resistance', value: specs.waterResistance },
-                        { label: 'Strap Material', value: specs.strapMaterial },
-                        { label: 'Crystal', value: specs.crystal },
+                        { label: 'Strap Material',   value: specs.strapMaterial },
+                        { label: 'Crystal',          value: specs.crystal },
                       ].filter(s => s.value).map((spec, i) => (
                         <div key={i} className={`spec-row ${i % 2 === 0 ? 'spec-row-even' : ''}`}>
                           <span className="spec-key">{spec.label}</span>
