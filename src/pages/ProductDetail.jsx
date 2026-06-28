@@ -7,7 +7,7 @@ import { useCart } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
 import ProductCard from '../components/ProductCard';
 import {
-  FiHeart, FiShoppingCart, FiTruck,
+  FiHeart, FiShoppingCart, FiArrowLeft, FiTruck,
   FiShield, FiRefreshCw, FiZap
 } from 'react-icons/fi';
 import '../styles/productdetail.css';
@@ -36,9 +36,9 @@ const ProductDetail = () => {
         const relatedRes = await axios.get(
           `${API_URL}/api/products?category=${data.product.category}`
         );
-        const filtered = relatedRes.data.products
-          .filter((p) => p._id !== id)
-          .slice(0, 4);
+        const filtered = relatedRes.data.products.filter(
+          (p) => p._id !== id
+        ).slice(0, 4);
         setRelatedProducts(filtered);
       } catch (error) {
         console.error('Product not found:', error);
@@ -79,63 +79,30 @@ const ProductDetail = () => {
     ? Math.round(((product.price - product.discountPrice) / product.price) * 100)
     : 0;
 
-  const handleAddToCart = () => addToCart(product, quantity);
+  const handleAddToCart = () => {
+    addToCart(product, quantity);
+  };
 
   const handleBuyNow = () => {
     buyNow(product, quantity);
     navigate('/checkout');
   };
 
-  // ── Order text (used in both share paths) ────────────────────
-  const buildOrderText = () =>
-    `🕐 *SARVORA WATCHES — New Order*\n` +
-    `━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n` +
-    `🛒 *Product Details*\n` +
-    `*Name:* ${product.name}\n` +
-    `*Category:* ${product.category}\n` +
-    `*Price:* Rs. ${displayPrice.toLocaleString()}\n` +
-    `*Quantity:* ${quantity}\n` +
-    `*Total:* Rs. ${(displayPrice * quantity).toLocaleString()}` +
-    (discountPercent > 0 ? `\n*Discount:* ${discountPercent}% OFF` : '') +
-    `\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n` +
-    `Please confirm availability and delivery details.`;
+  const generateWhatsAppMessage = () => {
+    const message = `
+🕐 *MK WATCHES — Product Inquiry*
+━━━━━━━━━━━━━━━━━━━━━
+I'm interested in this watch:
 
-  // ── Main handler: Web Share API (image + text) ────────────────
-  const handleWhatsAppOrder = async () => {
-    const orderText = buildOrderText();
-    const firstImageUrl = product.images?.[0]?.url;
-    const canShareFiles =
-      firstImageUrl &&
-      typeof navigator.share === 'function' &&
-      typeof navigator.canShare === 'function';
+*${product.name}*
+Category: ${product.category}
+Price: Rs. ${displayPrice.toLocaleString()}
+Quantity: ${quantity}
 
-    if (canShareFiles) {
-      try {
-        const res = await fetch(firstImageUrl);
-        const blob = await res.blob();
-        const ext = blob.type.includes('png') ? 'png'
-          : blob.type.includes('webp') ? 'webp' : 'jpg';
-        const file = new File(
-          [blob],
-          `${product.name.replace(/\s+/g, '-')}.${ext}`,
-          { type: blob.type }
-        );
-        if (navigator.canShare({ files: [file] })) {
-          await navigator.share({ files: [file], text: orderText });
-          return;
-        }
-      } catch (err) {
-        if (err.name === 'AbortError') return;
-        console.warn('File share failed, fallback:', err);
-      }
-    }
-
-    // Fallback: wa.me link (desktop / unsupported browsers)
-    window.open(
-      `https://wa.me/923142371705?text=${encodeURIComponent(orderText)}`,
-      '_blank',
-      'noreferrer'
-    );
+Please confirm availability and delivery details.
+━━━━━━━━━━━━━━━━━━━━━
+    `.trim();
+    return encodeURIComponent(message);
   };
 
   const specs = product.specifications || {};
@@ -152,10 +119,8 @@ const ProductDetail = () => {
             <span className="breadcrumb-sep">›</span>
             <span onClick={() => navigate('/products')} className="breadcrumb-link">Collection</span>
             <span className="breadcrumb-sep">›</span>
-            <span
-              onClick={() => navigate(`/products?category=${product.category}`)}
-              className="breadcrumb-link"
-            >{product.category}</span>
+            <span onClick={() => navigate(`/products?category=${product.category}`)}
+              className="breadcrumb-link">{product.category}</span>
             <span className="breadcrumb-sep">›</span>
             <span className="breadcrumb-current">{product.name}</span>
           </div>
@@ -318,14 +283,16 @@ const ProductDetail = () => {
                   Buy Now
                 </button>
 
-                <button
+                {/* ✅ Fixed: href aur attributes sahi jagah */}
+                <a
+                  href={`https://wa.me/923202645413?text=${generateWhatsAppMessage()}`}
+                  target="_blank"
+                  rel="noreferrer"
                   className="detail-whatsapp-order-btn"
-                  onClick={handleWhatsAppOrder}
-                  disabled={product.stock === 0}
                 >
                   <span className="wa-icon">📱</span>
                   Order via WhatsApp
-                </button>
+                </a>
               </div>
 
               {/* Delivery Info */}
@@ -393,12 +360,12 @@ const ProductDetail = () => {
                   {hasSpecs ? (
                     <div className="specs-table">
                       {[
-                        { label: 'Movement',         value: specs.movement },
-                        { label: 'Case Material',    value: specs.caseMaterial },
-                        { label: 'Case Size',        value: specs.caseSize },
+                        { label: 'Movement', value: specs.movement },
+                        { label: 'Case Material', value: specs.caseMaterial },
+                        { label: 'Case Size', value: specs.caseSize },
                         { label: 'Water Resistance', value: specs.waterResistance },
-                        { label: 'Strap Material',   value: specs.strapMaterial },
-                        { label: 'Crystal',          value: specs.crystal },
+                        { label: 'Strap Material', value: specs.strapMaterial },
+                        { label: 'Crystal', value: specs.crystal },
                       ].filter(s => s.value).map((spec, i) => (
                         <div key={i} className={`spec-row ${i % 2 === 0 ? 'spec-row-even' : ''}`}>
                           <span className="spec-key">{spec.label}</span>
