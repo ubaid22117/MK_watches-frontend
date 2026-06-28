@@ -23,6 +23,7 @@ const ProductDetail = () => {
   const [selectedImg, setSelectedImg] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState('description');
+  const [waLoading, setWaLoading] = useState(false);
   const { addToCart, buyNow } = useCart();
   const { addToWishlist, isInWishlist } = useWishlist();
 
@@ -100,65 +101,44 @@ const ProductDetail = () => {
     `\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n` +
     `Please confirm availability and delivery details.`;
 
-  // ── Image ko blob mein convert karo (CORS-safe canvas trick) ──
-  const fetchImageBlob = (url) =>
-    new Promise((resolve, reject) => {
-      // Method 1: seedha fetch (works if CORS allowed)
-      fetch(url, { mode: 'cors' })
-        .then((r) => r.blob())
-        .then(resolve)
-        .catch(() => {
-          // Method 2: canvas trick — CORS nahi chahiye
-          const img = new Image();
-          img.crossOrigin = 'anonymous';
-          img.onload = () => {
-            const canvas = document.createElement('canvas');
-            canvas.width = img.naturalWidth;
-            canvas.height = img.naturalHeight;
-            canvas.getContext('2d').drawImage(img, 0, 0);
-            canvas.toBlob((blob) => {
-              blob ? resolve(blob) : reject(new Error('Canvas toBlob failed'));
-            }, 'image/jpeg', 0.92);
-          };
-          img.onerror = () => reject(new Error('Image load failed'));
-          img.src = url;
-        });
-    });
-
-  // ── Main handler: Web Share API (image + text) ────────────────
-  const handleWhatsAppOrder = async () => {
-    const orderText = buildOrderText();
+  // ── Step 1: Image download karo customer ke phone mein ─────────
+  const downloadProductImage = () => {
     const firstImageUrl = product.images?.[0]?.url;
+    if (!firstImageUrl) return;
 
-    const supportsShare =
-      typeof navigator.share === 'function' &&
-      typeof navigator.canShare === 'function';
+    // Invisible <a> tag se download trigger karo
+    const a = document.createElement('a');
+    a.href = firstImageUrl;
+    a.download = `${product.name.replace(/\s+/g, '-')}.jpg`;
+    a.target = '_blank'; // fallback if download attr blocked
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  };
 
-    if (firstImageUrl && supportsShare) {
-      try {
-        const blob = await fetchImageBlob(firstImageUrl);
-        const file = new File(
-          [blob],
-          `${product.name.replace(/\s+/g, '-')}.jpg`,
-          { type: 'image/jpeg' }
-        );
+  // ── Step 2: WhatsApp seller ke number pe open karo ───────────
+  const openWhatsApp = () => {
+    const waUrl =
+      `https://wa.me/923142371705?text=${encodeURIComponent(buildOrderText())}`;
+    window.open(waUrl, '_blank', 'noreferrer');
+  };
 
-        if (navigator.canShare({ files: [file] })) {
-          await navigator.share({ files: [file], text: orderText });
-          return; // Share ho gaya, done
-        }
-      } catch (err) {
-        if (err.name === 'AbortError') return; // User ne cancel kiya
-        console.warn('Share with image failed, using text fallback:', err);
-      }
+  // ── Main handler: pehle image download, phir WhatsApp open ───
+  const handleWhatsAppOrder = () => {
+    const hasImage = product.images && product.images.length > 0;
+    setWaLoading(true);
+
+    if (hasImage) {
+      downloadProductImage();
+      // 800ms delay — download start ho, phir WA khule
+      setTimeout(() => {
+        openWhatsApp();
+        setWaLoading(false);
+      }, 800);
+    } else {
+      openWhatsApp();
+      setWaLoading(false);
     }
-
-    // Fallback: wa.me link (desktop / unsupported browsers)
-    window.open(
-      `https://wa.me/923142371705?text=${encodeURIComponent(orderText)}`,
-      '_blank',
-      'noreferrer'
-    );
   };
 
   const specs = product.specifications || {};
@@ -344,10 +324,10 @@ const ProductDetail = () => {
                 <button
                   className="detail-whatsapp-order-btn"
                   onClick={handleWhatsAppOrder}
-                  disabled={product.stock === 0}
+                  disabled={product.stock === 0 || waLoading}
                 >
-                  <span className="wa-icon">📱</span>
-                  Order via WhatsApp
+                  <span className="wa-icon">{waLoading ? '⏳' : '📱'}</span>
+                  {waLoading ? 'Sending...' : 'Order via WhatsApp'}
                 </button>
               </div>
 
