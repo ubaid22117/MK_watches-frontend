@@ -1,71 +1,88 @@
-import { useEffect } from 'react';
-import { useNavigate, Link, useLocation } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext';
-import { FiGrid, FiPackage, FiShoppingBag, FiUsers, FiLogOut, FiPlus, FiHome } from 'react-icons/fi';
+import { useState } from 'react';
+import { NavLink, useNavigate } from 'react-router-dom';
+import { useAdminAuth } from '../../context/AdminAuthContext';
+import {
+  FiGrid, FiPackage, FiShoppingBag, FiUsers,
+  FiLogOut, FiMenu, FiX, FiHome
+} from 'react-icons/fi';
+
+const NAV = [
+  { to: '/admin/dashboard', icon: FiGrid,       label: 'Dashboard' },
+  { to: '/admin/products',  icon: FiPackage,     label: 'Products' },
+  { to: '/admin/orders',    icon: FiShoppingBag, label: 'Orders' },
+  { to: '/admin/users',     icon: FiUsers,       label: 'Users' },
+];
 
 const AdminLayout = ({ children }) => {
-  const { user, logout } = useAuth();
+  const { adminUser, adminLogout } = useAdminAuth();
   const navigate = useNavigate();
-  const location = useLocation();
-
-  useEffect(() => {
-    if (!user || !user.isAdmin) navigate('/admin/login');
-  }, [user, navigate]);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const handleLogout = () => {
-    logout();
+    adminLogout();
     navigate('/admin/login');
   };
 
-  const navItems = [
-    { path: '/admin', icon: <FiGrid />, label: 'Dashboard' },
-    { path: '/admin/products', icon: <FiPackage />, label: 'Products' },
-    { path: '/admin/products/add', icon: <FiPlus />, label: 'Add Product' },
-    { path: '/admin/orders', icon: <FiShoppingBag />, label: 'Orders' },
-    { path: '/admin/users', icon: <FiUsers />, label: 'Users' },
-  ];
-
-  if (!user || !user.isAdmin) return null;
-
   return (
     <div className="admin-layout">
-      <aside className="admin-sidebar">
-        <div className="admin-sidebar-logo">
-          <h2>MK</h2>
-          <p>Admin Panel</p>
+      {/* ── Sidebar ── */}
+      <aside className={`admin-sidebar ${sidebarOpen ? 'sidebar-open' : ''}`}>
+        <div className="sidebar-logo">
+          <span className="sidebar-logo-icon">⚙️</span>
+          <div>
+            <p className="sidebar-logo-title">Sarvora</p>
+            <p className="sidebar-logo-sub">Admin Panel</p>
+          </div>
         </div>
 
-        <nav className="admin-nav">
-          {navItems.map((item) => (
-            <Link key={item.path} to={item.path}
-              className={`admin-nav-item ${location.pathname === item.path ? 'admin-nav-active' : ''}`}>
-              <span className="admin-nav-icon">{item.icon}</span>
-              <span>{item.label}</span>
-            </Link>
+        <nav className="sidebar-nav">
+          {NAV.map(({ to, icon: Icon, label }) => (
+            <NavLink key={to} to={to}
+              className={({ isActive }) =>
+                `sidebar-link ${isActive ? 'sidebar-link-active' : ''}`
+              }
+              onClick={() => setSidebarOpen(false)}
+            >
+              <Icon size={18} />
+              <span>{label}</span>
+            </NavLink>
           ))}
         </nav>
 
-        <div className="admin-sidebar-footer">
-          <Link to="/" className="admin-nav-item" style={{ marginBottom: '8px', color: '#555' }}>
-            <FiHome /> <span>Visit Store</span>
-          </Link>
-          <div className="admin-user-info">
-            <div className="admin-user-avatar">
-              {user?.name?.charAt(0).toUpperCase()}
-            </div>
-            <div>
-              <p className="admin-user-name">{user?.name}</p>
-              <p className="admin-user-role">Administrator</p>
-            </div>
-          </div>
-          <button className="admin-logout-btn" onClick={handleLogout}>
-            <FiLogOut /> Sign Out
+        <div className="sidebar-footer">
+          <a href="/" target="_blank" className="sidebar-link" style={{ marginBottom: '4px' }}>
+            <FiHome size={18} />
+            <span>View Store</span>
+          </a>
+          <button className="sidebar-logout" onClick={handleLogout}>
+            <FiLogOut size={18} />
+            <span>Logout</span>
           </button>
+          <p className="sidebar-user">{adminUser?.name}</p>
         </div>
       </aside>
 
+      {/* Overlay for mobile */}
+      {sidebarOpen && (
+        <div className="sidebar-overlay" onClick={() => setSidebarOpen(false)} />
+      )}
+
+      {/* ── Main Content ── */}
       <main className="admin-main">
-        <div className="admin-content">{children}</div>
+        {/* Top bar */}
+        <div className="admin-topbar">
+          <button className="admin-menu-btn" onClick={() => setSidebarOpen(p => !p)}>
+            {sidebarOpen ? <FiX size={22} /> : <FiMenu size={22} />}
+          </button>
+          <p className="admin-topbar-title">Admin Panel</p>
+          <div className="admin-topbar-avatar">
+            {adminUser?.name?.charAt(0).toUpperCase()}
+          </div>
+        </div>
+
+        <div className="admin-content">
+          {children}
+        </div>
       </main>
     </div>
   );
