@@ -3,20 +3,19 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import { useAdminAuth } from '../../context/AdminAuthContext';
 import {
   FiGrid, FiPackage, FiShoppingBag, FiUsers,
-  FiLogOut, FiMenu, FiX, FiHome
+  FiLogOut, FiHome
 } from 'react-icons/fi';
 
 const NAV = [
-  { to: '/admin/dashboard', icon: FiGrid,       label: 'Dashboard' },
-  { to: '/admin/products',  icon: FiPackage,     label: 'Products' },
-  { to: '/admin/orders',    icon: FiShoppingBag, label: 'Orders' },
-  { to: '/admin/users',     icon: FiUsers,       label: 'Users' },
+  { to: '/admin/dashboard', icon: FiGrid,        label: 'Dashboard' },
+  { to: '/admin/products',  icon: FiPackage,      label: 'Products' },
+  { to: '/admin/orders',    icon: FiShoppingBag,  label: 'Orders' },
+  { to: '/admin/users',     icon: FiUsers,        label: 'Users' },
 ];
 
 const AdminLayout = ({ children }) => {
   const { adminUser, adminLogout } = useAdminAuth();
   const navigate = useNavigate();
-  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const handleLogout = () => {
     adminLogout();
@@ -25,65 +24,72 @@ const AdminLayout = ({ children }) => {
 
   return (
     <div className="admin-layout">
+
       {/* ── Sidebar ── */}
-      <aside className={`admin-sidebar ${sidebarOpen ? 'sidebar-open' : ''}`}>
-        <div className="sidebar-logo">
-          <span className="sidebar-logo-icon">⚙️</span>
-          <div>
-            <p className="sidebar-logo-title">Sarvora</p>
-            <p className="sidebar-logo-sub">Admin Panel</p>
-          </div>
+      <aside className="admin-sidebar">
+
+        {/* Logo */}
+        <div className="admin-sidebar-logo">
+          <h2>MK</h2>
+          <p>Admin Panel</p>
         </div>
 
-        <nav className="sidebar-nav">
+        {/* Nav links */}
+        <nav className="admin-nav">
           {NAV.map(({ to, icon: Icon, label }) => (
-            <NavLink key={to} to={to}
+            <NavLink
+              key={to}
+              to={to}
               className={({ isActive }) =>
-                `sidebar-link ${isActive ? 'sidebar-link-active' : ''}`
+                `admin-nav-item ${isActive ? 'admin-nav-active' : ''}`
               }
-              onClick={() => setSidebarOpen(false)}
             >
-              <Icon size={18} />
-              <span>{label}</span>
+              <span className="admin-nav-icon"><Icon size={17} /></span>
+              {label}
             </NavLink>
           ))}
         </nav>
 
-        <div className="sidebar-footer">
-          <a href="/" target="_blank" className="sidebar-link" style={{ marginBottom: '4px' }}>
-            <FiHome size={18} />
-            <span>View Store</span>
+        {/* Footer */}
+        <div className="admin-sidebar-footer">
+          {/* User info */}
+          <div className="admin-user-info">
+            <div className="admin-user-avatar">
+              {adminUser?.name?.charAt(0).toUpperCase() || 'A'}
+            </div>
+            <div style={{ minWidth: 0 }}>
+              <p className="admin-user-name">{adminUser?.name || 'Admin'}</p>
+              <p className="admin-user-role">Administrator</p>
+            </div>
+          </div>
+
+          {/* View store */}
+          <a
+            href="/"
+            target="_blank"
+            rel="noreferrer"
+            className="admin-nav-item"
+            style={{ marginBottom: '6px', borderRadius: '8px' }}
+          >
+            <span className="admin-nav-icon"><FiHome size={17} /></span>
+            View Store
           </a>
-          <button className="sidebar-logout" onClick={handleLogout}>
-            <FiLogOut size={18} />
-            <span>Logout</span>
+
+          {/* Logout */}
+          <button className="admin-logout-btn" onClick={handleLogout}>
+            <FiLogOut size={16} />
+            Logout
           </button>
-          <p className="sidebar-user">{adminUser?.name}</p>
         </div>
       </aside>
 
-      {/* Overlay for mobile */}
-      {sidebarOpen && (
-        <div className="sidebar-overlay" onClick={() => setSidebarOpen(false)} />
-      )}
-
-      {/* ── Main Content ── */}
+      {/* ── Main ── */}
       <main className="admin-main">
-        {/* Top bar */}
-        <div className="admin-topbar">
-          <button className="admin-menu-btn" onClick={() => setSidebarOpen(p => !p)}>
-            {sidebarOpen ? <FiX size={22} /> : <FiMenu size={22} />}
-          </button>
-          <p className="admin-topbar-title">Admin Panel</p>
-          <div className="admin-topbar-avatar">
-            {adminUser?.name?.charAt(0).toUpperCase()}
-          </div>
-        </div>
-
         <div className="admin-content">
           {children}
         </div>
       </main>
+
     </div>
   );
 };

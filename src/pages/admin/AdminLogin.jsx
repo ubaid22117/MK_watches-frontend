@@ -1,167 +1,177 @@
-import { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import axios from 'axios';
 import toast from 'react-hot-toast';
-import { useAuth } from '../../context/AuthContext';
-import { FiLock, FiMail, FiEye, FiEyeOff, FiShield } from 'react-icons/fi';
+import { useAdminAuth } from '../../context/AdminAuthContext';
+
+const API_URL = import.meta.env.VITE_API_URL;
 
 const AdminLogin = () => {
-  const [form, setForm] = useState({ email: '', password: '' });
-  const [showPassword, setShowPassword] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const { login } = useAuth();
   const navigate = useNavigate();
+  const { adminUser, setAdminUser } = useAdminAuth();
+  const [form, setForm] = useState({ email: '', password: '' });
+  const [loading, setLoading] = useState(false);
 
-  const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
+  // Pehle se logged in hai to dashboard pe bhejo
+  useEffect(() => {
+    if (adminUser?.isAdmin) {
+      navigate('/admin/dashboard', { replace: true });
+    }
+  }, [adminUser, navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!form.email || !form.password) {
+      toast.error('Email and password required');
+      return;
+    }
     setLoading(true);
     try {
-     const { data } = await axios.post(`${import.meta.env.VITE_API_URL}/api/auth/login`, form);
+      const { data } = await axios.post(`${API_URL}/api/auth/login`, form);
+
       if (!data.isAdmin) {
-        toast.error('Access denied. Admin privileges required.');
+        toast.error('Access denied. Admin credentials required.');
+        setLoading(false);
         return;
       }
-      login(data);
-      toast.success('Welcome to Admin Panel!');
-      navigate('/admin');
+
+      // ── Context update karo, localStorage mein bhi save karo ──
+      localStorage.setItem('adminUser', JSON.stringify(data));
+      setAdminUser(data);  // ← yeh context update karta hai
+
+      toast.success(`Welcome, ${data.name}!`);
+
+      // Thoda delay do taake context update ho jaye
+      setTimeout(() => {
+        navigate('/admin/dashboard', { replace: true });
+      }, 300);
+
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Authentication failed');
+      toast.error(error.response?.data?.message || 'Login failed');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="admin-login-page">
-      {/* Animated Background */}
-      <div className="adm-bg">
-        <div className="adm-bg-orb adm-orb-1" />
-        <div className="adm-bg-orb adm-orb-2" />
-        <div className="adm-bg-lines" />
-      </div>
+    <div style={{
+      minHeight: '100vh',
+      background: '#0a0a0a',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: '1rem',
+    }}>
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        style={{
+          width: '100%',
+          maxWidth: '420px',
+          background: '#111',
+          border: '1px solid rgba(212,175,55,0.15)',
+          borderRadius: '16px',
+          padding: '2.5rem 2rem',
+        }}
+      >
+        <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
+          <div style={{
+            width: '56px', height: '56px',
+            background: 'linear-gradient(135deg, #D4AF37, #A0820A)',
+            borderRadius: '12px',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            margin: '0 auto 1rem',
+            fontSize: '1.5rem',
+          }}>⚙️</div>
+          <h1 style={{
+            fontFamily: "'Playfair Display', serif",
+            color: 'white', fontSize: '1.6rem', margin: '0 0 6px',
+          }}>Admin Panel</h1>
+          <p style={{ color: '#555', fontSize: '0.85rem', margin: 0 }}>
+            MK Watches — Admin Only
+          </p>
+        </div>
 
-      <div className="adm-layout">
-        {/* Left Branding */}
-        <motion.div
-          className="adm-left"
-          initial={{ opacity: 0, x: -50 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.8 }}
-        >
-          <div className="adm-brand">
-            <h1>MK</h1>
-            <p>WATCHES</p>
+        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+          <div>
+            <label style={{
+              display: 'block', color: '#888',
+              fontSize: '0.78rem', marginBottom: '6px', letterSpacing: '0.5px',
+            }}>
+              ADMIN EMAIL
+            </label>
+            <input
+              type="email"
+              value={form.email}
+              onChange={e => setForm(p => ({ ...p, email: e.target.value }))}
+              placeholder="admin@email.com"
+              style={{
+                width: '100%', padding: '12px 14px',
+                background: 'rgba(255,255,255,0.04)',
+                border: '1px solid rgba(212,175,55,0.2)',
+                borderRadius: '8px', color: 'white',
+                fontSize: '0.9rem', outline: 'none',
+                fontFamily: "'Poppins', sans-serif",
+                boxSizing: 'border-box',
+              }}
+              onFocus={e => e.target.style.borderColor = '#D4AF37'}
+              onBlur={e => e.target.style.borderColor = 'rgba(212,175,55,0.2)'}
+            />
           </div>
 
-          <div className="adm-left-text">
-            <h2>Admin Control Center</h2>
-            <p>
-              Manage your luxury watch store with full control over products, orders, and customers.
-            </p>
+          <div>
+            <label style={{
+              display: 'block', color: '#888',
+              fontSize: '0.78rem', marginBottom: '6px', letterSpacing: '0.5px',
+            }}>
+              ADMIN PASSWORD
+            </label>
+            <input
+              type="password"
+              value={form.password}
+              onChange={e => setForm(p => ({ ...p, password: e.target.value }))}
+              placeholder="••••••••"
+              style={{
+                width: '100%', padding: '12px 14px',
+                background: 'rgba(255,255,255,0.04)',
+                border: '1px solid rgba(212,175,55,0.2)',
+                borderRadius: '8px', color: 'white',
+                fontSize: '0.9rem', outline: 'none',
+                fontFamily: "'Poppins', sans-serif",
+                boxSizing: 'border-box',
+              }}
+              onFocus={e => e.target.style.borderColor = '#D4AF37'}
+              onBlur={e => e.target.style.borderColor = 'rgba(212,175,55,0.2)'}
+            />
           </div>
 
-          <div className="adm-left-stats">
-            {[
-              { label: 'Products', value: 'Manage' },
-              { label: 'Orders', value: 'Track' },
-              { label: 'Customers', value: 'Serve' },
-              { label: 'Revenue', value: 'Grow' },
-            ].map((s, i) => (
-              <div key={i} className="adm-stat">
-                <span className="adm-stat-value">{s.value}</span>
-                <span className="adm-stat-label">{s.label}</span>
-              </div>
-            ))}
-          </div>
+          <button
+            type="submit"
+            disabled={loading}
+            style={{
+              width: '100%', padding: '13px',
+              background: loading ? '#333' : 'linear-gradient(135deg, #D4AF37, #A0820A)',
+              color: loading ? '#666' : '#000',
+              border: 'none', borderRadius: '8px',
+              fontSize: '0.9rem', fontWeight: '700',
+              cursor: loading ? 'not-allowed' : 'pointer',
+              fontFamily: "'Poppins', sans-serif",
+              marginTop: '0.5rem', transition: 'all 0.3s',
+            }}
+          >
+            {loading ? 'Verifying...' : 'Login to Admin Panel'}
+          </button>
+        </form>
 
-          <Link to="/" className="adm-visit-store">
-            ← Visit Store
-          </Link>
-        </motion.div>
-
-        {/* Right Form */}
-        <motion.div
-          className="adm-right"
-          initial={{ opacity: 0, x: 50 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.8 }}
-        >
-          <div className="adm-form-card">
-            {/* Shield Icon */}
-            <div className="adm-shield-icon">
-              <FiShield />
-            </div>
-
-            <h2 className="adm-form-title">Secure Access</h2>
-            <p className="adm-form-sub">
-              Authorized administrators only
-            </p>
-
-            <form onSubmit={handleSubmit} className="adm-form">
-              <div className="adm-field">
-                <label>Admin Email</label>
-                <div className="adm-input-wrap">
-                  <FiMail className="adm-input-icon" />
-                  <input
-                    type="email"
-                    name="email"
-                    value={form.email}
-                    onChange={handleChange}
-                    placeholder="admin@MK.com"
-                    required
-                    autoComplete="email"
-                  />
-                </div>
-              </div>
-
-              <div className="adm-field">
-                <label>Password</label>
-                <div className="adm-input-wrap">
-                  <FiLock className="adm-input-icon" />
-                  <input
-                    type={showPassword ? 'text' : 'password'}
-                    name="password"
-                    value={form.password}
-                    onChange={handleChange}
-                    placeholder="Enter admin password"
-                    required
-                    autoComplete="current-password"
-                  />
-                  <button
-                    type="button"
-                    className="adm-eye-btn"
-                    onClick={() => setShowPassword(!showPassword)}
-                  >
-                    {showPassword ? <FiEyeOff /> : <FiEye />}
-                  </button>
-                </div>
-              </div>
-
-              <button type="submit" className="adm-submit-btn" disabled={loading}>
-                {loading ? (
-                  <span className="adm-btn-loading">
-                    <span className="adm-spinner" />
-                    Authenticating...
-                  </span>
-                ) : (
-                  <>
-                    <FiShield />
-                    Access Admin Panel
-                  </>
-                )}
-              </button>
-            </form>
-
-            <div className="adm-security-note">
-              <FiLock />
-              <span>256-bit encrypted • Secure session</span>
-            </div>
-          </div>
-        </motion.div>
-      </div>
+        <p style={{
+          textAlign: 'center', color: '#333',
+          fontSize: '0.75rem', marginTop: '1.5rem',
+        }}>
+          This page is for administrators only.<br />
+          <a href="/" style={{ color: '#555', textDecoration: 'none' }}>← Back to Store</a>
+        </p>
+      </motion.div>
     </div>
   );
 };
