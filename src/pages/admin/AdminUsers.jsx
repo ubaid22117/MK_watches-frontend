@@ -2,18 +2,20 @@ import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import axios from 'axios';
 import toast from 'react-hot-toast';
-import { useAuth } from '../../context/AuthContext';
+import { useAdminAuth } from '../../context/AdminAuthContext';
 import AdminLayout from './AdminLayout';
 import { FiTrash2, FiUser, FiShield } from 'react-icons/fi';
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 const AdminUsers = () => {
-  const { user } = useAuth();
+  const { adminUser: user } = useAdminAuth();
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
 
   const fetchUsers = async () => {
     try {
-      const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/api/users`, {
+      const { data } = await axios.get(`${API_URL}/api/users`, {
         headers: { Authorization: `Bearer ${user?.token}` },
       });
       setUsers(data.users);
@@ -29,7 +31,7 @@ const AdminUsers = () => {
   const handleDelete = async (id, name) => {
     if (!window.confirm(`Are you sure you want to delete "${name}"?`)) return;
     try {
-      await axios.delete(`${import.meta.env.VITE_API_URL}/api/users/${id}`, {
+      await axios.delete(`${API_URL}/api/users/${id}`, {
         headers: { Authorization: `Bearer ${user?.token}` },
       });
       toast.success('User deleted successfully!');
@@ -49,7 +51,7 @@ const AdminUsers = () => {
       </div>
 
       {loading ? (
-        <div className="admin-loading"><div className="spinner" /></div>
+        <div className="admin-loading"><div className="adm-spinner" /></div>
       ) : (
         <motion.div className="admin-card" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
           <div className="admin-table-wrap">
@@ -86,7 +88,8 @@ const AdminUsers = () => {
                     <td>
                       <span style={{
                         color: u.isVerified ? '#2ecc71' : '#e67e22',
-                        fontSize: '0.78rem', fontWeight: 600
+                        fontSize: '0.78rem',
+                        fontWeight: 600,
                       }}>
                         {u.isVerified ? '✓ Verified' : '⏳ Pending'}
                       </span>
@@ -96,8 +99,10 @@ const AdminUsers = () => {
                     </td>
                     <td>
                       {!u.isAdmin && (
-                        <button className="admin-delete-btn"
-                          onClick={() => handleDelete(u._id, u.name)}>
+                        <button
+                          className="admin-delete-btn"
+                          onClick={() => handleDelete(u._id, u.name)}
+                        >
                           <FiTrash2 />
                         </button>
                       )}

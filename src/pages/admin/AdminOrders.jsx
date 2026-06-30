@@ -2,13 +2,13 @@ import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import axios from 'axios';
 import toast from 'react-hot-toast';
-import { useAuth } from '../../context/AuthContext';
+import { useAdminAuth } from '../../context/AdminAuthContext';
 import AdminLayout from './AdminLayout';
 
 const API_URL = import.meta.env.VITE_API_URL;
 
 const AdminOrders = () => {
-  const { user } = useAuth();
+  const { adminUser: user } = useAdminAuth();
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -87,7 +87,7 @@ const AdminOrders = () => {
       </div>
 
       {loading ? (
-        <div className="admin-loading"><div className="spinner" /></div>
+        <div className="admin-loading"><div className="adm-spinner" /></div>
       ) : orders.length === 0 ? (
         <div className="admin-empty">
           <h3>No Orders Yet</h3>
@@ -212,8 +212,12 @@ const AdminOrders = () => {
                       </select>
                     </>
                   )}
-                  <a href={`https://wa.me/92${order.customerInfo?.phone?.replace(/^0/, '')}?text=Hello ${order.customerInfo?.name}! Your MK WATCHES order #${order._id.slice(-6).toUpperCase()} status has been updated to: *${order.status}*`}
-                    target="_blank" rel="noreferrer" className="whatsapp-contact-btn">
+                  <a
+                    href={`https://wa.me/92${order.customerInfo?.phone?.replace(/^0/, '')}?text=Hello ${order.customerInfo?.name}! Your MK WATCHES order #${order._id.slice(-6).toUpperCase()} status has been updated to: *${order.status}*`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="whatsapp-contact-btn"
+                  >
                     📱 WhatsApp Customer
                   </a>
                 </div>

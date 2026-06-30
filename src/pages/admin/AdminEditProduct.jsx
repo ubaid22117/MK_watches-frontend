@@ -26,15 +26,14 @@ const AdminEditProduct = () => {
   const navigate = useNavigate();
   const { adminUser } = useAdminAuth();
   const [form, setForm] = useState(emptyForm);
-  const [existingImages, setExistingImages] = useState([]);  // already uploaded
-  const [newImages, setNewImages] = useState([]);            // new files to upload
-  const [previews, setPreviews] = useState([]);              // preview for new files
+  const [existingImages, setExistingImages] = useState([]);
+  const [newImages, setNewImages] = useState([]);
+  const [previews, setPreviews] = useState([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
   const headers = { Authorization: `Bearer ${adminUser?.token}` };
 
-  // Fetch existing product
   useEffect(() => {
     const fetchProduct = async () => {
       try {
@@ -114,11 +113,7 @@ const AdminEditProduct = () => {
           formData.append(key, val);
         }
       });
-
-      // Existing images jo rakhni hain
       formData.append('existingImages', JSON.stringify(existingImages));
-
-      // New images
       newImages.forEach(file => formData.append('images', file));
 
       await axios.put(`${API_URL}/api/products/${id}`, formData, {
@@ -136,7 +131,7 @@ const AdminEditProduct = () => {
 
   if (loading) return (
     <AdminLayout>
-      <div className="admin-loading"><div className="spinner" /></div>
+      <div className="admin-loading"><div className="adm-spinner" /></div>
     </AdminLayout>
   );
 
@@ -147,7 +142,11 @@ const AdminEditProduct = () => {
           <h1 className="admin-page-title">Edit Product</h1>
           <p className="admin-page-sub">{form.name}</p>
         </div>
-        <button onClick={() => navigate('/admin/products')} className="admin-back-btn">
+        <button
+          type="button"
+          onClick={() => navigate('/admin/products')}
+          className="admin-add-btn"
+        >
           ← Back
         </button>
       </div>
@@ -156,64 +155,112 @@ const AdminEditProduct = () => {
         <div className="admin-form-grid">
 
           {/* ── Left Column ── */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+          <div className="admin-form-left">
 
             {/* Basic Info */}
             <motion.div className="admin-card" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-              <h3 className="admin-card-title" style={{ marginBottom: '1.2rem' }}>Basic Information</h3>
-              <div className="admin-form-field">
+              <h3 className="admin-card-title">Basic Information</h3>
+
+              <div className="admin-form-group">
                 <label>Product Name *</label>
-                <input name="name" value={form.name} onChange={handleChange}
-                  placeholder="e.g. Rolex Submariner Date" required />
+                <input
+                  name="name"
+                  value={form.name}
+                  onChange={handleChange}
+                  placeholder="e.g. Rolex Submariner Date"
+                  required
+                />
               </div>
-              <div className="admin-form-field">
+
+              <div className="admin-form-group">
                 <label>Description</label>
-                <textarea name="description" value={form.description} onChange={handleChange}
-                  rows={4} placeholder="Describe the watch..." />
+                <textarea
+                  name="description"
+                  value={form.description}
+                  onChange={handleChange}
+                  rows={4}
+                  placeholder="Describe the watch..."
+                />
               </div>
+
               <div className="admin-form-row">
-                <div className="admin-form-field">
+                <div className="admin-form-group">
                   <label>Category *</label>
                   <select name="category" value={form.category} onChange={handleChange}>
                     {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
                   </select>
                 </div>
-                <div className="admin-form-field">
+                <div className="admin-form-group">
                   <label>Stock *</label>
-                  <input type="number" name="stock" value={form.stock} onChange={handleChange}
-                    min="0" placeholder="0" required />
+                  <input
+                    type="number"
+                    name="stock"
+                    value={form.stock}
+                    onChange={handleChange}
+                    min="0"
+                    placeholder="0"
+                    required
+                  />
                 </div>
               </div>
+
               <div className="admin-form-row">
-                <div className="admin-form-field">
+                <div className="admin-form-group">
                   <label>Price (Rs.) *</label>
-                  <input type="number" name="price" value={form.price} onChange={handleChange}
-                    min="0" placeholder="145000" required />
+                  <input
+                    type="number"
+                    name="price"
+                    value={form.price}
+                    onChange={handleChange}
+                    min="0"
+                    placeholder="145000"
+                    required
+                  />
                 </div>
-                <div className="admin-form-field">
+                <div className="admin-form-group">
                   <label>Discount Price (Rs.)</label>
-                  <input type="number" name="discountPrice" value={form.discountPrice}
-                    onChange={handleChange} min="0" placeholder="Leave empty if no discount" />
+                  <input
+                    type="number"
+                    name="discountPrice"
+                    value={form.discountPrice}
+                    onChange={handleChange}
+                    min="0"
+                    placeholder="Leave empty if no discount"
+                  />
                 </div>
               </div>
-              <div style={{ display: 'flex', gap: '1.5rem', marginTop: '0.5rem' }}>
+
+              <div className="admin-checkboxes">
                 <label className="admin-checkbox-label">
-                  <input type="checkbox" name="isNewArrival" checked={form.isNewArrival}
-                    onChange={handleChange} />
+                  <input
+                    type="checkbox"
+                    name="isNewArrival"
+                    checked={form.isNewArrival}
+                    onChange={handleChange}
+                  />
                   New Arrival
                 </label>
                 <label className="admin-checkbox-label">
-                  <input type="checkbox" name="isBestSeller" checked={form.isBestSeller}
-                    onChange={handleChange} />
+                  <input
+                    type="checkbox"
+                    name="isBestSeller"
+                    checked={form.isBestSeller}
+                    onChange={handleChange}
+                  />
                   Best Seller
                 </label>
               </div>
             </motion.div>
 
             {/* Specifications */}
-            <motion.div className="admin-card" initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-              transition={{ delay: 0.1 }}>
-              <h3 className="admin-card-title" style={{ marginBottom: '1.2rem' }}>Specifications</h3>
+            <motion.div
+              className="admin-card"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.1 }}
+              style={{ marginTop: '1.5rem' }}
+            >
+              <h3 className="admin-card-title">Specifications</h3>
               <div className="admin-form-row">
                 {[
                   { name: 'movement', label: 'Movement' },
@@ -223,10 +270,14 @@ const AdminEditProduct = () => {
                   { name: 'strapMaterial', label: 'Strap Material' },
                   { name: 'crystal', label: 'Crystal' },
                 ].map(spec => (
-                  <div key={spec.name} className="admin-form-field">
+                  <div key={spec.name} className="admin-form-group">
                     <label>{spec.label}</label>
-                    <input name={spec.name} value={form.specifications[spec.name]}
-                      onChange={handleSpecChange} placeholder={spec.label} />
+                    <input
+                      name={spec.name}
+                      value={form.specifications[spec.name]}
+                      onChange={handleSpecChange}
+                      placeholder={spec.label}
+                    />
                   </div>
                 ))}
               </div>
@@ -234,68 +285,91 @@ const AdminEditProduct = () => {
           </div>
 
           {/* ── Right Column — Images ── */}
-          <motion.div className="admin-card" initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-            transition={{ delay: 0.15 }}
-            style={{ alignSelf: 'start' }}>
-            <h3 className="admin-card-title" style={{ marginBottom: '1.2rem' }}>Product Images</h3>
+          <div className="admin-form-right">
+            <motion.div
+              className="admin-card"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.15 }}
+            >
+              <h3 className="admin-card-title">Product Images</h3>
 
-            {/* Existing images */}
-            {existingImages.length > 0 && (
-              <div style={{ marginBottom: '1rem' }}>
-                <p style={{ color: '#666', fontSize: '0.8rem', marginBottom: '8px' }}>
-                  Current Images (click × to remove)
-                </p>
-                <div className="admin-images-grid">
-                  {existingImages.map(img => (
-                    <div key={img.public_id} className="admin-image-thumb">
-                      <img src={img.url} alt="product" />
-                      <button type="button" className="admin-image-remove"
-                        onClick={() => removeExistingImage(img.public_id)}>
-                        <FiX size={12} />
-                      </button>
-                    </div>
-                  ))}
+              {/* Existing images */}
+              {existingImages.length > 0 && (
+                <div style={{ marginBottom: '1rem' }}>
+                  <p style={{ color: '#666', fontSize: '0.8rem', marginBottom: '8px' }}>
+                    Current Images (click × to remove)
+                  </p>
+                  <div className="admin-img-previews">
+                    {existingImages.map(img => (
+                      <div key={img.public_id} style={{ position: 'relative' }}>
+                        <img src={img.url} alt="product" />
+                        <button
+                          type="button"
+                          onClick={() => removeExistingImage(img.public_id)}
+                          className="admin-delete-btn"
+                          style={{ position: 'absolute', top: 4, right: 4, width: 24, height: 24, borderRadius: 4 }}
+                        >
+                          <FiX size={12} />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
 
-            {/* New image previews */}
-            {previews.length > 0 && (
-              <div style={{ marginBottom: '1rem' }}>
-                <p style={{ color: '#666', fontSize: '0.8rem', marginBottom: '8px' }}>
-                  New Images (to be uploaded)
-                </p>
-                <div className="admin-images-grid">
-                  {previews.map((src, idx) => (
-                    <div key={idx} className="admin-image-thumb">
-                      <img src={src} alt={`new-${idx}`} />
-                      <button type="button" className="admin-image-remove"
-                        onClick={() => removeNewImage(idx)}>
-                        <FiX size={12} />
-                      </button>
-                    </div>
-                  ))}
+              {/* New image previews */}
+              {previews.length > 0 && (
+                <div style={{ marginBottom: '1rem' }}>
+                  <p style={{ color: '#666', fontSize: '0.8rem', marginBottom: '8px' }}>
+                    New Images (to be uploaded)
+                  </p>
+                  <div className="admin-img-previews">
+                    {previews.map((src, idx) => (
+                      <div key={idx} style={{ position: 'relative' }}>
+                        <img src={src} alt={`new-${idx}`} />
+                        <button
+                          type="button"
+                          onClick={() => removeNewImage(idx)}
+                          className="admin-delete-btn"
+                          style={{ position: 'absolute', top: 4, right: 4, width: 24, height: 24, borderRadius: 4 }}
+                        >
+                          <FiX size={12} />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
 
-            {/* Upload button */}
-            <label className="admin-upload-label">
-              <FiUpload size={20} />
-              <span>Click to add images</span>
-              <input type="file" multiple accept="image/*"
-                onChange={handleImageFiles} style={{ display: 'none' }} />
-            </label>
-            <p style={{ color: '#555', fontSize: '0.76rem', marginTop: '8px', textAlign: 'center' }}>
-              PNG, JPG, WEBP — multiple allowed
-            </p>
+              {/* Upload area */}
+              <label className="admin-upload-area" style={{ cursor: 'pointer' }}>
+                <FiUpload size={28} color="#D4AF37" />
+                <p>Click to add images</p>
+                <span>PNG, JPG, WEBP — multiple allowed</span>
+                <input
+                  type="file"
+                  multiple
+                  accept="image/*"
+                  onChange={handleImageFiles}
+                  style={{ display: 'none' }}
+                />
+              </label>
 
-            {/* Submit button */}
-            <button type="submit" disabled={saving} className="admin-save-btn"
-              style={{ marginTop: '1.5rem', width: '100%' }}>
-              {saving ? 'Saving...' : <><FiSave /> Save Changes</>}
-            </button>
-          </motion.div>
+              {/* Submit button */}
+              <button
+                type="submit"
+                disabled={saving}
+                className="admin-submit-btn"
+                style={{ marginTop: '1rem' }}
+              >
+                {saving
+                  ? <span className="adm-btn-loading"><span className="adm-spinner" /> Saving...</span>
+                  : <><FiSave style={{ marginRight: 6 }} /> Save Changes</>
+                }
+              </button>
+            </motion.div>
+          </div>
 
         </div>
       </form>

@@ -56,7 +56,7 @@ const AdminDashboard = () => {
         // ── 4. Users — fail ho to 0 ──
         let totalUsers = 0;
         try {
-          const usersRes = await axios.get(`${API_URL}/api/auth/admin/users`, { headers });
+          const usersRes = await axios.get(`${API_URL}/api/users`, { headers });
           totalUsers = usersRes.data.users?.length || 0;
         } catch { /* users route nahi hai to ignore */ }
 
